@@ -1,0 +1,1885 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<meta name="theme-color" content="#f2f2f2">
+    <title>LED Panel</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@200;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+/* Embedded font removed to reclaim LittleFS space for image storage */
+</style>
+    <script>
+!function e(r,t,a){function n(i,o){if(!t[i]){if(!r[i]){var p="function"==typeof require&&require;if(!o&&p)return p(i,!0);if(s)return s(i,!0);var l=new Error("Cannot find module '"+i+"'");throw l.code="MODULE_NOT_FOUND",l}var u=t[i]={exports:{}};r[i][0].call(u.exports,function(e){var t=r[i][1][e];return n(t?t:e)},u,u.exports,e,r,t,a)}return t[i].exports}for(var s="function"==typeof require&&require,i=0;i<a.length;i++)n(a[i]);return n}({1:[function(e,r,t){function a(e){this.data=e,this.pos=0}a.prototype.readByte=function(){return this.data[this.pos++]},a.prototype.peekByte=function(){return this.data[this.pos]},a.prototype.readBytes=function(e){for(var r=new Array(e),t=0;e>t;t++)r[t]=this.readByte();return r},a.prototype.peekBytes=function(e){for(var r=new Array(e),t=0;e>t;t++)r[t]=this.data[this.pos+t];return r},a.prototype.readString=function(e){for(var r="",t=0;e>t;t++)r+=String.fromCharCode(this.readByte());return r},a.prototype.readBitArray=function(){for(var e=[],r=this.readByte(),t=7;t>=0;t--)e.push(!!(r&1<<t));return e},a.prototype.readUnsigned=function(e){var r=this.readBytes(2);return e?(r[1]<<8)+r[0]:(r[0]<<8)+r[1]},r.exports=a},{}],2:[function(e,r,t){function a(e){this.stream=new s(e),this.output={}}function n(e){return e.reduce(function(e,r){return 2*e+r},0)}var s=e("./bytestream");a.prototype.parse=function(e){return this.parseParts(this.output,e),this.output},a.prototype.parseParts=function(e,r){for(var t=0;t<r.length;t++){var a=r[t];this.parsePart(e,a)}},a.prototype.parsePart=function(e,r){var t,a=r.label;if(!r.requires||r.requires(this.stream,this.output,e))if(r.loop){for(var n=[];r.loop(this.stream);){var s={};this.parseParts(s,r.parts),n.push(s)}e[a]=n}else r.parts?(t={},this.parseParts(t,r.parts),e[a]=t):r.parser?(t=r.parser(this.stream,this.output,e),r.skip||(e[a]=t)):r.bits&&(e[a]=this.parseBits(r.bits))},a.prototype.parseBits=function(e){var r={},t=this.stream.readBitArray();for(var a in e){var s=e[a];r[a]=s.length?n(t.slice(s.index,s.index+s.length)):t[s.index]}return r},r.exports=a},{"./bytestream":1}],3:[function(e,r,t){var a={readByte:function(){return function(e){return e.readByte()}},readBytes:function(e){return function(r){return r.readBytes(e)}},readString:function(e){return function(r){return r.readString(e)}},readUnsigned:function(e){return function(r){return r.readUnsigned(e)}},readArray:function(e,r){return function(t,a,n){for(var s=r(t,a,n),i=new Array(s),o=0;s>o;o++)i[o]=t.readBytes(e);return i}}};r.exports=a},{}],4:[function(e,r,t){var a=window.GIF||{};a=e("./gif"),window.GIF=a},{"./gif":5}],5:[function(e,r,t){function a(e){var r=new Uint8Array(e),t=new n(r);this.raw=t.parse(s),this.raw.hasImages=!1;for(var a=0;a<this.raw.frames.length;a++)if(this.raw.frames[a].image){this.raw.hasImages=!0;break}}var n=e("../bower_components/js-binary-schema-parser/src/dataparser"),s=e("./schema");a.prototype.decompressFrame=function(e,r){function t(e,r,t){var a,n,s,i,o,p,l,u,d,c,f,h,y,g,b,m,v=4096,x=-1,w=t,B=new Array(t),k=new Array(v),A=new Array(v),S=new Array(v+1);for(h=e,n=1<<h,o=n+1,a=n+2,l=x,i=h+1,s=(1<<i)-1,d=0;n>d;d++)k[d]=0,A[d]=d;for(f=u=count=y=g=m=b=0,c=0;w>c;){if(0===g){if(i>u){f+=r[b]<<u,u+=8,b++;continue}if(d=f&s,f>>=i,u-=i,d>a||d==o)break;if(d==n){i=h+1,s=(1<<i)-1,a=n+2,l=x;continue}if(l==x){S[g++]=A[d],l=d,y=d;continue}for(p=d,d==a&&(S[g++]=y,d=l);d>n;)S[g++]=A[d],d=k[d];y=255&A[d],S[g++]=y,v>a&&(k[a]=l,A[a]=y,a++,0===(a&s)&&v>a&&(i++,s+=a)),l=p}g--,B[m++]=S[g],c++}for(c=m;w>c;c++)B[c]=0;return B}function a(e,r){for(var t=new Array(e.length),a=e.length/r,n=function(a,n){var s=e.slice(n*r,(n+1)*r);t.splice.apply(t,[a*r,r].concat(s))},s=[0,4,2,1],i=[8,8,4,2],o=0,p=0;4>p;p++)for(var l=s[p];a>l;l+=i[p])n(l,o),o++;return t}function n(e){for(var r=e.pixels.length,t=new Uint8ClampedArray(4*r),a=0;r>a;a++){var n=4*a,s=e.pixels[a],i=e.colorTable[s];t[n]=i[0],t[n+1]=i[1],t[n+2]=i[2],t[n+3]=s!==e.transparentIndex?255:0}return t}if(e>=this.raw.frames.length)return null;var s=this.raw.frames[e];if(s.image){var i=s.image.descriptor.width*s.image.descriptor.height,o=t(s.image.data.minCodeSize,s.image.data.blocks,i);s.image.descriptor.lct.interlaced&&(o=a(o,s.image.descriptor.width));var p={pixels:o,dims:{top:s.image.descriptor.top,left:s.image.descriptor.left,width:s.image.descriptor.width,height:s.image.descriptor.height}};return p.colorTable=s.image.descriptor.lct&&s.image.descriptor.lct.exists?s.image.lct:this.raw.gct,s.gce&&(p.delay=10*(s.gce.delay||10),p.disposalType=s.gce.extras.disposal,s.gce.extras.transparentColorGiven&&(p.transparentIndex=s.gce.transparentColorIndex)),r&&(p.patch=n(p)),p}return null},a.prototype.decompressFrames=function(e){for(var r=[],t=0;t<this.raw.frames.length;t++){var a=this.raw.frames[t];a.image&&r.push(this.decompressFrame(t,e))}return r},r.exports=a},{"../bower_components/js-binary-schema-parser/src/dataparser":2,"./schema":6}],6:[function(e,r,t){var a=e("../bower_components/js-binary-schema-parser/src/parsers"),n={label:"blocks",parser:function(e){for(var r=[],t=0,a=e.readByte();a!==t;a=e.readByte())r=r.concat(e.readBytes(a));return r}},s={label:"gce",requires:function(e){var r=e.peekBytes(2);return 33===r[0]&&249===r[1]},parts:[{label:"codes",parser:a.readBytes(2),skip:!0},{label:"byteSize",parser:a.readByte()},{label:"extras",bits:{future:{index:0,length:3},disposal:{index:3,length:3},userInput:{index:6},transparentColorGiven:{index:7}}},{label:"delay",parser:a.readUnsigned(!0)},{label:"transparentColorIndex",parser:a.readByte()},{label:"terminator",parser:a.readByte(),skip:!0}]},i={label:"image",requires:function(e){var r=e.peekByte();return 44===r},parts:[{label:"code",parser:a.readByte(),skip:!0},{label:"descriptor",parts:[{label:"left",parser:a.readUnsigned(!0)},{label:"top",parser:a.readUnsigned(!0)},{label:"width",parser:a.readUnsigned(!0)},{label:"height",parser:a.readUnsigned(!0)},{label:"lct",bits:{exists:{index:0},interlaced:{index:1},sort:{index:2},future:{index:3,length:2},size:{index:5,length:3}}}]},{label:"lct",requires:function(e,r,t){return t.descriptor.lct.exists},parser:a.readArray(3,function(e,r,t){return Math.pow(2,t.descriptor.lct.size+1)})},{label:"data",parts:[{label:"minCodeSize",parser:a.readByte()},n]}]},o={label:"text",requires:function(e){var r=e.peekBytes(2);return 33===r[0]&&1===r[1]},parts:[{label:"codes",parser:a.readBytes(2),skip:!0},{label:"blockSize",parser:a.readByte()},{label:"preData",parser:function(e,r,t){return e.readBytes(t.text.blockSize)}},n]},p={label:"application",requires:function(e,r,t){var a=e.peekBytes(2);return 33===a[0]&&255===a[1]},parts:[{label:"codes",parser:a.readBytes(2),skip:!0},{label:"blockSize",parser:a.readByte()},{label:"id",parser:function(e,r,t){return e.readString(t.blockSize)}},n]},l={label:"comment",requires:function(e,r,t){var a=e.peekBytes(2);return 33===a[0]&&254===a[1]},parts:[{label:"codes",parser:a.readBytes(2),skip:!0},n]},u={label:"frames",parts:[s,p,l,i,o],loop:function(e){var r=e.peekByte();return 33===r||44===r}},d=[{label:"header",parts:[{label:"signature",parser:a.readString(3)},{label:"version",parser:a.readString(3)}]},{label:"lsd",parts:[{label:"width",parser:a.readUnsigned(!0)},{label:"height",parser:a.readUnsigned(!0)},{label:"gct",bits:{exists:{index:0},resolution:{index:1,length:3},sort:{index:4},size:{index:5,length:3}}},{label:"backgroundColorIndex",parser:a.readByte()},{label:"pixelAspectRatio",parser:a.readByte()}]},{label:"gct",requires:function(e,r){return r.lsd.gct.exists},parser:a.readArray(3,function(e,r){return Math.pow(2,r.lsd.gct.size+1)})},u];r.exports=d},{"../bower_components/js-binary-schema-parser/src/parsers":3}]},{},[4]);
+</script>
+<style>
+:root {
+  /* Dieter Rams Dark Mode Palette */
+  --bg-color: #121212;     /* Matte Dark Grey */
+  --card-bg: #1c1c1c;      /* Slightly lighter surface */
+  --text-primary: #e0e0e0; /* Crisp off-white */
+  --text-secondary: #888888; /* Neutral mid-grey */ 
+  
+  /* Accents */
+  --warm-white: #ffffff;   /* Pure white for highlights */
+  --amber-glow: #ea5b2c;   /* Braun Orange Accent (keeping var name for compat) */
+  --rain-blue: #3c8f56;    /* Muted Green (Success) */
+  
+  --border: #333333;       /* Subtle definition */
+  --radius: 4px;           /* Tight but not sharp */
+  
+  --font-stack: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --mono-stack: "Menlo", "Consolas", monospace;
+}
+
+* { box-sizing: border-box; touch-action: manipulation; }
+
+body {
+  font-family: var(--font-stack);
+  background: var(--bg-color);
+  color: var(--text-primary);
+  margin: 0;
+  padding: 40px 20px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+main { max-width: 520px; margin: 0 auto; }
+
+/* Header */
+header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 24px;
+  width: 100%;
+  padding-bottom: 0;
+  padding-left: 5px;
+}
+
+h1 { 
+  font-family: var(--font-stack);
+  font-size: 2rem; 
+  margin: 0; 
+  text-transform: none; 
+  letter-spacing: -0.02em; 
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--text-primary);
+  background: none;
+  -webkit-text-fill-color: var(--text-primary);
+  text-shadow: none;
+}
+
+h1 .matrix-dots {
+  width: 0.72em;
+  height: 0.72em;
+  vertical-align: -0.02em;
+  margin-right: 0.3em;
+  fill: var(--text-primary);
+  opacity: 0.8;
+  transition: fill 0.4s;
+}
+
+/* Heart animation on load */
+@keyframes dot-heart {
+  0%, 8% { fill: var(--text-primary); opacity: 1; }
+  16%, 75% { fill: #e85d3a; opacity: 1; }
+  90%, 100% { fill: var(--text-primary); opacity: 1; }
+}
+@keyframes dot-dim {
+  0%, 100% { opacity: 1; }
+}
+/* Heart dots: 2,4,6,7,8,9,10,11,12,13,14,15,17,18,19,23 */
+h1 .matrix-dots circle:nth-child(2),
+h1 .matrix-dots circle:nth-child(4),
+h1 .matrix-dots circle:nth-child(6),
+h1 .matrix-dots circle:nth-child(7),
+h1 .matrix-dots circle:nth-child(8),
+h1 .matrix-dots circle:nth-child(9),
+h1 .matrix-dots circle:nth-child(10),
+h1 .matrix-dots circle:nth-child(11),
+h1 .matrix-dots circle:nth-child(12),
+h1 .matrix-dots circle:nth-child(13),
+h1 .matrix-dots circle:nth-child(14),
+h1 .matrix-dots circle:nth-child(15),
+h1 .matrix-dots circle:nth-child(17),
+h1 .matrix-dots circle:nth-child(18),
+h1 .matrix-dots circle:nth-child(19),
+h1 .matrix-dots circle:nth-child(23) {
+  animation: dot-heart 5s ease-in-out 0.4s both;
+}
+/* Non-heart dots dim during the reveal */
+h1 .matrix-dots circle:nth-child(1),
+h1 .matrix-dots circle:nth-child(3),
+h1 .matrix-dots circle:nth-child(5),
+h1 .matrix-dots circle:nth-child(16),
+h1 .matrix-dots circle:nth-child(20),
+h1 .matrix-dots circle:nth-child(21),
+h1 .matrix-dots circle:nth-child(22),
+h1 .matrix-dots circle:nth-child(24),
+h1 .matrix-dots circle:nth-child(25) {
+  animation: dot-dim 5s ease-in-out 0.4s both;
+}
+
+/* Secondary glow layer removed - print doesn't glow */
+h1::after {
+    content: none;
+}
+
+/* Navigation */
+.matrix-mode-wrap {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  background: #1a1a1a;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  margin: 0 -20px 24px -20px;
+  padding: 20px 20px;
+}
+.matrix-mode-title { display: none; }
+.matrix-mode {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+.matrix-mode-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 52px;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  background: none !important;
+  background-color: transparent !important;
+  color: var(--text-secondary);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  outline: none !important;
+  box-shadow: none !important;
+}
+.matrix-mode-btn:focus,
+.matrix-mode-btn:active,
+.matrix-mode-btn:hover,
+.matrix-mode-btn.active {
+  background: none !important;
+  background-color: transparent !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+.matrix-mode-btn.active { color: var(--text-primary); }
+.matrix-mode-btn .knob {
+  width: 52px; height: 52px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  transition: box-shadow 0.2s, transform 0.1s, background 0.3s;
+}
+.matrix-mode-btn svg {
+  width: 20px; height: 20px;
+  stroke: currentColor; fill: none;
+  stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+  position: relative;
+  z-index: 1;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+.matrix-mode-btn:active .knob {
+  transform: scale(0.95);
+}
+.matrix-mode-btn.active svg { stroke: #fff; opacity: 1; }
+.matrix-mode-btn.upload-locked {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+/* Per-mode knob colors: dark/muted default, lit when active */
+#matrix-mode-images .knob {
+  background:
+    radial-gradient(ellipse 80% 55% at 50% 30%, rgba(255,255,255,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 90% 60% at 50% 110%, rgba(0,0,0,0.18) 0%, transparent 60%),
+    linear-gradient(160deg, #4a2a1a 0%, #351d10 40%, #241208 100%);
+  box-shadow:
+    0 1px 1px 0 rgba(255,150,100,0.05) inset,
+    0 -2px 3px 0 rgba(0,0,0,0.4) inset,
+    0 4px 8px -1px rgba(0,0,0,0.5),
+    0 2px 3px rgba(0,0,0,0.3),
+    0 0 0 1px rgba(0,0,0,0.3);
+}
+#matrix-mode-images.active .knob {
+  background:
+    radial-gradient(ellipse 70% 50% at 50% 28%, rgba(255,255,255,0.22) 0%, transparent 55%),
+    radial-gradient(ellipse 90% 60% at 50% 110%, rgba(0,0,0,0.12) 0%, transparent 60%),
+    linear-gradient(160deg, #c85a28 0%, #a84520 40%, #7e3218 100%);
+  box-shadow:
+    0 1px 1px 0 rgba(255,200,160,0.18) inset,
+    0 -2px 3px 0 rgba(0,0,0,0.35) inset,
+    0 4px 8px -1px rgba(0,0,0,0.45),
+    0 2px 3px rgba(0,0,0,0.3),
+    0 0 0 1px rgba(100,40,10,0.3);
+}
+
+#matrix-mode-effects .knob {
+  background:
+    radial-gradient(ellipse 80% 55% at 50% 30%, rgba(255,255,255,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 90% 60% at 50% 110%, rgba(0,0,0,0.18) 0%, transparent 60%),
+    linear-gradient(160deg, #1e324a 0%, #152538 40%, #0e1a28 100%);
+  box-shadow:
+    0 1px 1px 0 rgba(120,160,220,0.05) inset,
+    0 -2px 3px 0 rgba(0,0,0,0.4) inset,
+    0 4px 8px -1px rgba(0,0,0,0.5),
+    0 2px 3px rgba(0,0,0,0.3),
+    0 0 0 1px rgba(0,0,0,0.3);
+}
+#matrix-mode-effects.active .knob {
+  background:
+    radial-gradient(ellipse 70% 50% at 50% 28%, rgba(255,255,255,0.22) 0%, transparent 55%),
+    radial-gradient(ellipse 90% 60% at 50% 110%, rgba(0,0,0,0.12) 0%, transparent 60%),
+    linear-gradient(160deg, #3a7abf 0%, #2c5f96 40%, #1e4470 100%);
+  box-shadow:
+    0 1px 1px 0 rgba(180,210,255,0.18) inset,
+    0 -2px 3px 0 rgba(0,0,0,0.35) inset,
+    0 4px 8px -1px rgba(0,0,0,0.45),
+    0 2px 3px rgba(0,0,0,0.3),
+    0 0 0 1px rgba(20,50,90,0.3);
+}
+
+#matrix-mode-settings .knob {
+  background:
+    radial-gradient(ellipse 80% 55% at 50% 30%, rgba(255,255,255,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 90% 60% at 50% 110%, rgba(0,0,0,0.18) 0%, transparent 60%),
+    linear-gradient(160deg, #333333 0%, #272727 40%, #1c1c1c 100%);
+  box-shadow:
+    0 1px 1px 0 rgba(255,255,255,0.04) inset,
+    0 -2px 3px 0 rgba(0,0,0,0.4) inset,
+    0 4px 8px -1px rgba(0,0,0,0.5),
+    0 2px 3px rgba(0,0,0,0.3),
+    0 0 0 1px rgba(0,0,0,0.3);
+}
+#matrix-mode-settings.active .knob {
+  background:
+    radial-gradient(ellipse 70% 50% at 50% 28%, rgba(255,255,255,0.22) 0%, transparent 55%),
+    radial-gradient(ellipse 90% 60% at 50% 110%, rgba(0,0,0,0.12) 0%, transparent 60%),
+    linear-gradient(160deg, #606060 0%, #4a4a4a 40%, #383838 100%);
+  box-shadow:
+    0 1px 1px 0 rgba(255,255,255,0.14) inset,
+    0 -2px 3px 0 rgba(0,0,0,0.35) inset,
+    0 4px 8px -1px rgba(0,0,0,0.45),
+    0 2px 3px rgba(0,0,0,0.3),
+    0 0 0 1px rgba(60,60,60,0.3);
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  background: var(--bg-color);
+  z-index: 100;
+  padding-top: 10px; /* Bit of padding since it sticks to top */
+}
+.tab {
+  flex: 1;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--text-secondary);
+  font-family: var(--font-stack);
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.tab:hover { color: var(--text-primary); }
+.tab.active {
+  color: var(--text-primary);
+  border-bottom-color: var(--amber-glow);
+  font-weight: 700;
+}
+
+/* Range Slider */
+input[type=range] {
+  width: 100%;
+  background: transparent;
+  cursor: pointer;
+  height: 24px;
+  -webkit-appearance: none;
+  margin: 10px 0 20px 0;
+}
+input[type=range]::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+}
+input[type=range]::-webkit-slider-thumb {
+    height: 16px;
+    width: 16px;
+    border-radius: 50%;
+    background: var(--section-accent, var(--amber-glow));
+    margin-top: -6px;
+    -webkit-appearance: none;
+}
+
+/* Cards */
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  margin-bottom: 20px;
+}
+
+/* Mode Grid */
+.mode-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+.mode-btn {
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-secondary);
+    padding: 16px;
+    font-family: var(--font-stack);
+    font-size: 0.85rem;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s;
+    font-weight: 500;
+}
+.mode-btn:hover { border-color: var(--text-primary); color: var(--text-primary); }
+.mode-btn.active {
+    background: var(--amber-glow);
+    border-color: var(--amber-glow);
+    color: #fff;
+    font-weight: bold;
+}
+
+/* Color Grid */
+.color-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+    margin-bottom: 12px;
+}
+.color-btn {
+    aspect-ratio: 1;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: transform 0.2s, border-color 0.2s;
+}
+.color-btn:hover { transform: scale(1.1); }
+.color-btn.active { border: 2px solid var(--warm-white); box-shadow: 0 0 8px rgba(255,255,255,0.5); }
+
+h2 {
+  font-family: var(--font-stack);
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin: 0 0 20px 0;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 12px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+h2::after { content: none; }
+
+/* Section accent colors */
+#tab-images { --section-accent: #c85a28; }
+#tab-wled { --section-accent: #3a7abf; }
+#tab-settings { --section-accent: #888; }
+
+/* Buttons */
+button {
+  background: transparent;
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 24px;
+  font-family: var(--font-stack);
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  width: 100%;
+  transition: all 0.2s;
+}
+button:hover:not(:disabled) {
+  border-color: var(--text-primary);
+  background: rgba(255,255,255,0.05);
+}
+button.primary {
+  background: var(--section-accent, var(--amber-glow));
+  border-color: var(--section-accent, var(--amber-glow));
+  color: #fff;
+  font-weight: 600;
+}
+button.primary:hover:not(:disabled) {
+  filter: brightness(1.15);
+  color: #fff;
+  box-shadow: none;
+}
+button:disabled { opacity: 0.3; cursor: not-allowed; }
+
+button.danger {
+  color: #e55; border-color: rgba(238, 85, 85, 0.3); width: auto; padding: 6px 12px; font-size: 0.75rem;
+}
+button.danger:hover { border-color: #e55; background: rgba(238, 85, 85, 0.1); }
+
+/* Inputs */
+input[type=text], input[type=password] {
+  width: 100%;
+  background: var(--bg-color);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px;
+  font-family: var(--font-stack);
+  font-size: 0.9rem;
+  margin-bottom: 20px;
+  transition: border-color 0.2s;
+}
+input:focus {
+  outline: none;
+  border-color: var(--amber-glow);
+}
+
+/* Previews */
+.preview-grid {
+  display: grid;
+  /* Columns set by JS */
+  gap: 12px;
+  margin-top: 24px;
+}
+.preview-item { 
+  background: #000;
+  aspect-ratio: 1; 
+  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.preview-item canvas { width: 100%; height: 100%; object-fit: contain; image-rendering: pixelated; }
+
+/* Progress */
+.progress-wrap { background: rgba(255,255,255,0.05); height: 12px; margin-top: 10px; width: 100%; border: 1px solid var(--border); }
+.progress-bar { background: var(--section-accent, var(--amber-glow)); height: 100%; width: 0%; box-shadow: none; transition: width 0.3s; }
+
+/* File List */
+.file-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  padding: 0;
+}
+.file-card {
+  display: flex;
+  flex-direction: column;
+  background: rgba(0,0,0,0.3);
+  border: 1px solid var(--border);
+  padding: 12px;
+  position: relative;
+  transition: border-color 0.2s;
+}
+.file-card:hover { border-color: var(--amber-glow); }
+.file-card.selected { border-color: var(--amber-glow); box-shadow: 0 0 10px var(--amber-glow); }
+
+.file-card canvas {
+  width: 100%;
+  aspect-ratio: 1;
+  image-rendering: pixelated; 
+  background: #000;
+  margin-bottom: 8px;
+  border: 1px solid var(--border);
+}
+
+.file-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.file-meta {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.filename {
+  font-family: var(--mono-stack);
+  font-size: 0.75rem;
+  color: var(--warm-white);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.filesize {
+  font-family: var(--mono-stack);
+  font-size: 0.65rem;
+  color: var(--text-secondary);
+}
+
+.btn-trash {
+  background: transparent;
+  border: none;
+  color: #cf6679;
+  padding: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: auto;
+}
+.btn-trash:hover { background: rgba(207, 102, 121, 0.1); }
+.btn-trash svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; }
+
+
+/* Mode Grid — matches file-list / file-card layout */
+.mode-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    padding: 0;
+}
+.mode-card {
+    display: flex;
+    flex-direction: column;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+.mode-card:hover { border-color: var(--text-secondary); }
+.mode-card.active {
+    border-color: var(--section-accent, var(--amber-glow));
+}
+.mode-preview {
+    width: 100%;
+    aspect-ratio: 1;
+    background: #000;
+    border: 1px solid var(--border);
+    margin-bottom: 8px;
+    overflow: hidden;
+}
+.mode-preview-canvas {
+    width: 100%;
+    height: 100%;
+    image-rendering: pixelated;
+    display: block;
+}
+.mode-label {
+    font-family: var(--mono-stack);
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.mode-card.active .mode-label {
+    color: var(--text-primary);
+}
+
+/* Effect Previews */
+.fx-rainbow { background: linear-gradient(45deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3); }
+.fx-plasma { background: radial-gradient(circle at 30% 30%, #ff00ff, #00ffff, #ffff00); filter: blur(2px); }
+.fx-rain { background: linear-gradient(180deg, rgba(0,255,0,0) 0%, #00ff00 80%, rgba(0,255,0,0) 100%); background-size: 10px 20px; }
+.fx-fire { background: linear-gradient(0deg, #ff0000 0%, #ffae00 40%, transparent 80%); }
+.fx-simple-fire { background: linear-gradient(0deg, #ff4500 0%, #ff8c00 50%, #000 100%); }
+.fx-ripple { background: radial-gradient(circle, transparent 20%, #00ffff 30%, transparent 40%); }
+.fx-twinkle { background-image: radial-gradient(#fff 1px, transparent 1px); background-size: 10px 10px; background-color: #000033; }
+.fx-balls { background-image: radial-gradient(circle, #ff0000 4px, transparent 5px), radial-gradient(circle, #0000ff 4px, transparent 5px); background-position: 0 0, 15px 15px; background-size: 30px 30px; }
+.fx-life { background-image: linear-gradient(#333 1px, transparent 1px), linear-gradient(90deg, #333 1px, transparent 1px); background-size: 8px 8px; background-color: #000; }
+.fx-pacman { background: conic-gradient(#ffff00 0% 280%, transparent 280%); border-radius: 50%; width: 40px !important; height: 40px !important; margin: 10px auto; transform: rotate(30deg); }
+.fx-dna { background: repeating-linear-gradient(45deg, #ff0000, #ff0000 5px, transparent 5px, transparent 10px), repeating-linear-gradient(-45deg, #0000ff, #0000ff 5px, transparent 5px, transparent 10px); }
+.fx-aurora { background: linear-gradient(90deg, #00ff00, #800080, #0000ff); filter: blur(2px); }
+.fx-andromeda {
+  background:
+    radial-gradient(circle at 45% 50%, rgba(255,245,220,0.95) 0%, rgba(255,210,140,0.65) 10%, rgba(255,140,90,0.25) 20%, rgba(0,0,0,0) 36%),
+    conic-gradient(from 10deg at 45% 50%, rgba(140,180,255,0.8), rgba(90,130,235,0.45), rgba(255,160,110,0.5), rgba(120,165,255,0.75));
+  filter: blur(1.5px) saturate(1.1);
+}
+.fx-lava {
+  background:
+    radial-gradient(circle at 35% 65%, rgba(255,200,40,0.9) 0%, rgba(220,140,10,0.5) 25%, transparent 45%),
+    radial-gradient(circle at 60% 30%, rgba(255,220,60,0.85) 0%, rgba(200,120,5,0.4) 30%, transparent 50%),
+    radial-gradient(circle at 50% 80%, rgba(255,180,20,0.7) 0%, transparent 35%),
+    linear-gradient(180deg, #0a1230 0%, #0c1840 100%);
+}
+
+/* Swiper for Settings */
+.swiper-container {
+    display: flex;
+    gap: 6px;
+}
+.swiper-pill {
+    flex: 1;
+    text-align: center;
+    background: #333;
+    color: var(--text-secondary);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    user-select: none;
+}
+.swiper-pill:hover {
+    background: #444;
+}
+.swiper-pill.active {
+    background: var(--section-accent, var(--amber-glow));
+    color: #000;
+    font-weight: bold;
+}
+
+/* Color Grid */
+.color-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+}
+.color-btn {
+    aspect-ratio: 1;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: transform 0.1s;
+}
+.color-btn:active { transform: scale(0.9); }
+.color-btn.active {
+    border-color: var(--amber-glow);
+    box-shadow: 0 0 8px var(--amber-glow);
+}
+
+</style>
+</head>
+<body>
+<main>
+
+
+  <header>
+    <h1><svg class="matrix-dots" viewBox="-0.5 -0.5 22 22" aria-hidden="true"><circle cx="1" cy="1" r="1"/><circle cx="5.75" cy="1" r="1"/><circle cx="10.5" cy="1" r="1"/><circle cx="15.25" cy="1" r="1"/><circle cx="20" cy="1" r="1"/><circle cx="1" cy="5.75" r="1"/><circle cx="5.75" cy="5.75" r="1"/><circle cx="10.5" cy="5.75" r="1"/><circle cx="15.25" cy="5.75" r="1"/><circle cx="20" cy="5.75" r="1"/><circle cx="1" cy="10.5" r="1"/><circle cx="5.75" cy="10.5" r="1"/><circle cx="10.5" cy="10.5" r="1"/><circle cx="15.25" cy="10.5" r="1"/><circle cx="20" cy="10.5" r="1"/><circle cx="1" cy="15.25" r="1"/><circle cx="5.75" cy="15.25" r="1"/><circle cx="10.5" cy="15.25" r="1"/><circle cx="15.25" cy="15.25" r="1"/><circle cx="20" cy="15.25" r="1"/><circle cx="1" cy="20" r="1"/><circle cx="5.75" cy="20" r="1"/><circle cx="10.5" cy="20" r="1"/><circle cx="15.25" cy="20" r="1"/><circle cx="20" cy="20" r="1"/></svg>LED Panel Control</h1>
+  </header>
+
+  <div class="matrix-mode-wrap">
+    <div class="matrix-mode-title">Panel Mode</div>
+    <div class="matrix-mode" role="radiogroup" aria-label="Panel mode">
+      <button id="matrix-mode-images" class="matrix-mode-btn active" role="radio" aria-checked="true" onclick="setAppMode('images', {userClick:true})">
+        <div class="knob"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="M21 16l-5.5-5.5L8 18"/></svg></div>
+        <span>Images</span>
+      </button>
+      <button id="matrix-mode-effects" class="matrix-mode-btn" role="radio" aria-checked="false" onclick="setAppMode('wled', {userClick:true})">
+        <div class="knob"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v4"/><path d="M12 17v4"/><path d="M3 12h4"/><path d="M17 12h4"/><path d="M6 6l3 3"/><path d="M15 15l3 3"/><path d="M18 6l-3 3"/><path d="M9 15l-3 3"/><circle cx="12" cy="12" r="3"/></svg></div>
+        <span>Effects</span>
+      </button>
+      <button id="matrix-mode-settings" class="matrix-mode-btn" role="radio" aria-checked="false" onclick="setAppMode('settings', {userClick:true})">
+        <div class="knob"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.6-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3h0a1.7 1.7 0 0 0 1-1.6V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.6h0a1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9v0a1.7 1.7 0 0 0 1.6 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.6 1z"/></svg></div>
+        <span>Settings</span>
+      </button>
+    </div>
+  </div>
+
+  <div id="tab-images">
+    <!-- Upload Section -->
+    <div class="card" style="padding: 16px 24px;">
+        <h2 style="margin-bottom: 8px;">Add Images</h2>
+        <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 0; margin-bottom: 14px; line-height: 1.4;">
+            See your crisp photos and GIFs morphed into chonky, lo-fi pixels!
+        </p>
+        <input type="file" id="fileInp" accept="image/*" multiple style="display:none">
+        
+        <button type="button" class="primary" id="dropZone" onclick="document.getElementById('fileInp').click()">
+        Upload Images
+        </button>
+
+        <!-- Processing/Preview Area -->
+        <div id="processArea" style="display:none">
+            <div class="preview-grid" id="previewGrid"></div>
+            <div id="statusText" class="text-sec" style="margin-top: 12px;">Ready</div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px;">
+                <button onclick="resetUpload()">Cancel</button>
+                <button class="primary" id="uploadBtn" onclick="uploadFiles()">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gallery Section -->
+    <div class="card">
+        <h2>Image Gallery</h2>
+        
+        <div id="fileList" class="file-list">
+        <div class="text-sec" style="text-align:center; padding:20px;">Loading images...</div>
+        </div>
+        
+        <div style="margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--border);">
+            <div id="storageText" style="font-family: var(--mono-stack); font-size: 0.8rem; color: var(--text-secondary);">Calculating storage...</div>
+            <div class="progress-wrap"><div class="progress-bar" id="memBar"></div></div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Image Playback</h2>
+        <div style="margin-bottom: 16px;">
+          <input type="hidden" id="interval" value="300">
+          <div class="swiper-container" id="interval-swiper">
+              <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <h2>Image Transition</h2>
+        <div style="margin-bottom: 16px;">
+          <input type="hidden" id="transitionMode" value="0">
+          <div class="swiper-container" id="transition-swiper">
+              <!-- Populated by JS -->
+          </div>
+        </div>
+
+    </div>
+  </div>
+
+  <!-- WLED Tab (Effects) -->
+  <div id="tab-wled" style="display:none">
+    <div class="card">
+        <h2>LED Effects</h2>
+        <input type="checkbox" id="wled-active" style="display:none" checked>
+        <div id="wled-controls">
+            <div style="margin-bottom: 24px;">
+                <div id="wled-mode-grid" class="mode-grid"></div>
+                <!-- Hidden input stores active mode id -->
+                <input type="hidden" id="wled-mode" value="1">
+            </div>
+            
+            <!-- Hidden inputs for shared state -->
+            <input type="hidden" id="wled-color" value="16750848">
+            <input type="hidden" id="wled-brightness" value="128">
+    </div>
+  </div>
+  </div>
+
+  <div id="tab-settings" style="display:none">
+      <div class="card">
+          <h2 style="margin-bottom: 12px;">Brightness</h2>
+          <div style="display:flex; align-items:center; gap:12px;">
+            <input type="range" id="brightness" min="0" max="100" value="50" style="flex:1;" oninput="handleBrightnessInput(this.value)">
+            <span style="min-width:36px; text-align:right; font-size:0.95rem;"><span id="brightVal">50</span>%</span>
+          </div>
+      </div>
+
+      <!-- Settings / WiFi -->
+      <div class="card" id="wifiCard">
+        <h2>Network Settings</h2>
+        <div id="wifiConnected" style="display:none;">
+            <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 16px; line-height: 1.5;">Connected to your local network.</p>
+            <div style="margin-bottom: 16px;">
+                <label class="label">Network Name</label>
+                <div id="wifiCurrentSSID" style="font-size: 0.95rem; padding: 10px 0 4px; color: var(--text-primary);"></div>
+                <label class="label" style="margin-top: 12px;">Password</label>
+                <div style="font-size: 0.95rem; padding: 10px 0 4px; color: var(--text-secondary);">••••••••</div>
+                <label class="label" style="margin-top: 12px;">Device Address</label>
+                <div id="wifiLocalAddr" style="font-size: 0.95rem; padding: 10px 0 4px; color: var(--text-primary); font-family: var(--mono-stack);"></div>
+            </div>
+            <button class="primary" onclick="showWifiEdit()">Change Network Configuration</button>
+        </div>
+        <div id="wifiEdit">
+            <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 20px; line-height: 1.5;">
+                Using your local network allows access to the LED Panel without needing to switch WiFi connections.
+            </p>
+            <label class="label">Network Name (SSID)</label>
+            <input type="text" id="ssid" placeholder="Home WiFi Name">
+            <label class="label">Password</label>
+            <input type="password" id="pass" placeholder="Network Password">
+            <button class="primary" onclick="saveWifi()" id="saveWifiBtn">Save Configuration</button>
+        </div>
+      </div>
+
+      <!-- About Section -->
+      <div class="card">
+        <div style="cursor: pointer; display: flex; justify-content: space-between; align-items: center;" onclick="toggleAbout()">
+            <h2 style="margin: 0; border: none; padding: 0;">About this project</h2>
+            <span id="aboutIcon" style="font-family: var(--mono-stack); color: var(--section-accent, var(--amber-glow)); font-weight: bold;">[+]</span>
+        </div>
+        <div id="aboutContent" style="display: none; margin-top: 16px; color: var(--text-secondary); font-size: 0.9rem; border-top: 1px solid var(--border); padding-top: 16px;">
+            <p style="margin-top: 0;">A standalone, WiFi-enabled digital art frame driven by an ESP32 and a 32x32 RGB LED Panel. This project creates a low-resolution display (inspired by artist Jim Campbell) that plays static images and animated GIFs uploaded directly from your phone or computer.</p>
+            <ul style="padding-left: 20px;">
+                <li style="margin-bottom: 8px;"><strong>Touchless Setup:</strong> Connects to your home WiFi or creates its own fallback Access Point.</li>
+                <li style="margin-bottom: 8px;"><strong>Easy Discovery:</strong> Accessible via mDNS instead of memorizing IP addresses.</li>
+                <li style="margin-bottom: 8px;"><strong>Browser-Side Processing:</strong> All resizing, cropping, and conversion happens privately in your browser.</li>
+                <li><strong>Smart Playback:</strong> Smooth cross-fades and random shuffle playlist.</li>
+            </ul>
+        </div>
+      </div>
+  </div>
+</main>
+
+<div id="toast-container"></div>
+
+<script>
+const W=32, H=32, MAX_FRAMES=60;
+let uploadQueue = [];
+let currentAppMode = 'images';
+let hasInitializedMode = false;
+let currentDeviceMode = 'images';
+let cachedStorageTotal = null;
+let cachedStorageUsed = null;
+let isUploading = false;
+const INTERVAL_OPTIONS = [
+    {l:'10s', v:10}, {l:'5m', v:300}, {l:'10m', v:600}, {l:'30m', v:1800}, {l:'60m', v:3600}
+];
+const TRANSITION_OPTIONS = [
+    {l:'Crossfade', v:0}, {l:'Pixel Dissolve', v:1}
+];
+
+// Helper: Throttle (Leading & Trailing)
+const throttle = (func, limit) => {
+  let lastFunc;
+  let lastRan;
+  return function() {
+    const context = this;
+    const args = arguments;
+    if (!lastRan) {
+      func.apply(context, args);
+      lastRan = Date.now();
+    } else {
+      clearTimeout(lastFunc);
+      lastFunc = setTimeout(function() {
+          if ((Date.now() - lastRan) >= limit) {
+              func.apply(context, args);
+              lastRan = Date.now();
+          }
+      }, Math.max(0, limit - (Date.now() - lastRan)));
+    }
+  }
+}
+
+const WLED_MODES = [
+    { n: "Fire", id: 1 },
+    { n: "Game of Life", id: 2 },
+    { n: "Rain", id: 3 },
+    { n: "Aurora", id: 4 }
+];
+
+// Preset colors (Integers)
+const WLED_COLORS = [
+    0xFFAA00, 0xFF0000, 0xFF9900, 0xFFFF00, 0x00FF00, 0x00FFFF, 
+    0x0000FF, 0x9900FF, 0xFF00FF, 0xFFFFFF
+];
+
+function populateWLEDModes() {
+    const grid = document.getElementById('wled-mode-grid');
+    if(!grid) return;
+    grid.innerHTML = "";
+    
+    // Default to the first effect (1) if the stored mode is 0 or invalid
+    let currentMode = parseInt(document.getElementById('wled-mode').value);
+    
+    // Modes array is 0-indexed here but corresponds to Firmware IDs 1-12
+    WLED_MODES.forEach((m, idx) => {
+        let firmwareId = m.id;
+        
+        const card = document.createElement('div');
+        card.className = `mode-card ${currentMode === firmwareId ? 'active' : ''}`;
+        card.onclick = () => {
+            document.querySelectorAll('.mode-card').forEach(b => b.classList.remove('active'));
+            card.classList.add('active');
+            document.getElementById('wled-mode').value = firmwareId;
+            // Also enable WLED switch if off
+            const sw = document.getElementById('wled-active');
+            if(sw && !sw.checked) { sw.checked = true; setWLEDStatus(true); }
+            updateWLED(); // Use updateWLED which includes throttle
+        };
+        
+        const prev = document.createElement('div');
+        prev.className = 'mode-preview';
+        const prevCanvas = document.createElement('canvas');
+        prevCanvas.className = 'mode-preview-canvas';
+        prevCanvas.width = 32;
+        prevCanvas.height = 32;
+        drawModePreview(prevCanvas, firmwareId);
+        prev.appendChild(prevCanvas);
+
+        const info = document.createElement('div');
+        info.className = 'mode-info';
+        const lbl = document.createElement('div');
+        lbl.className = 'mode-label';
+        lbl.innerText = m.n;
+        info.appendChild(lbl);
+        
+        card.appendChild(prev);
+        card.appendChild(info);
+        grid.appendChild(card);
+    });
+}
+
+function drawModePreview(canvas, modeId) {
+    const ctx = canvas.getContext('2d');
+    if(!ctx) return;
+    const img = ctx.createImageData(32, 32);
+    const d = img.data;
+    const setPx = (x, y, r, g, b) => {
+        if(x < 0 || y < 0 || x >= 32 || y >= 32) return;
+        const i = ((y * 32) + x) * 4;
+        d[i] = r; d[i + 1] = g; d[i + 2] = b; d[i + 3] = 255;
+    };
+    // Seeded pseudo-random for deterministic previews
+    let seed = modeId * 9973;
+    const rng = () => { seed ^= seed << 13; seed ^= seed >> 17; seed ^= seed << 5; return (seed >>> 0) & 255; };
+
+    // Clear to black
+    for(let y = 0; y < 32; y++) for(let x = 0; x < 32; x++) setPx(x, y, 0, 0, 0);
+
+    if(modeId === 1) {
+        // Fire: per-column flame tongues with varying heights, like the firmware
+        // Generate per-column flame heights (taller near center, with random variation)
+        const colH=[];
+        for(let x=0;x<32;x++){
+            const dc=Math.abs(x-15.5);
+            const base=28-dc*0.7; // center columns burn taller
+            colH[x]=Math.max(4, base-(rng()%8)+(rng()%5));
+        }
+        // Add a few extra-tall tongue columns
+        for(let i=0;i<6;i++){
+            const tx=6+rng()%20;
+            colH[tx]=Math.min(31, colH[tx]+(3+rng()%5));
+        }
+        for(let x=0;x<32;x++){
+            const maxH=colH[x];
+            // Slight sway: neighbor influence
+            const sway=(colH[Math.max(0,x-1)]+colH[Math.min(31,x+1)])/2;
+            const effH=(maxH*2+sway)/3;
+            for(let y=0;y<32;y++){
+                const row=31-y; // 0=bottom
+                if(row>effH+2){setPx(x,y,0,0,0);continue;}
+                // Heat: hot at base, drops per row with per-pixel jitter
+                const jit=(rng()%30-15);
+                let heat=255*(1-row/effH)+jit;
+                // Sharpen flame tips: rapid falloff near top of each column
+                if(row>effH-3) heat*=Math.max(0,(effH+2-row)/5);
+                heat=Math.max(0,Math.min(255,heat));
+                const t=heat|0;
+                let r=0,g=0,b=0;
+                if(t<55){r=(t*2.8)|0;g=t>>3;}
+                else if(t<130){r=Math.min(255,140+((t-55)*1.5)|0);g=10+((t-55)*0.7)|0;}
+                else if(t<210){r=255;g=60+((t-130)*1.9)|0;b=(t-130)>>3;}
+                else{r=255;g=Math.min(255,210+((t-210))|0);b=Math.min(100,15+((t-210)*2)|0);}
+                setPx(x,y,Math.min(255,r),Math.min(255,g),Math.min(255,b));
+            }
+        }
+    } else if(modeId === 2) {
+        // Game of Life: teal aquatic bg with scattered warm cells
+        for(let y=0;y<32;y++) for(let x=0;x<32;x++){
+            const n=rng();
+            setPx(x,y, 8+(n>>6), 22+(n>>5), 28+(n>>5)); // dark teal water
+        }
+        for(let y=0;y<32;y++) for(let x=0;x<32;x++){
+            if(rng()<56){
+                const v=180+rng()%60;
+                setPx(x,y,v,v-8,v-20); // warm white cells
+            }
+        }
+    } else if(modeId === 3) {
+        // Rain: dark pavement with concentric ripple rings
+        const pave=28;
+        for(let y=0;y<32;y++) for(let x=0;x<32;x++){
+            const n=rng()%8;
+            setPx(x,y,pave+n,pave+n,pave+n+2);
+        }
+        const drops=[[8,10,7],[22,6,5],[14,22,9],[26,18,4],[4,26,6]];
+        drops.forEach(([cx,cy,rad])=>{
+            for(let y=0;y<32;y++) for(let x=0;x<32;x++){
+                const dist=Math.sqrt((x-cx)**2+(y-cy)**2);
+                for(let ring=1;ring<=rad;ring+=2){
+                    if(Math.abs(dist-ring)<0.7){
+                        const fade=Math.max(0,1-ring/(rad+1));
+                        const v=pave+((60*fade)|0);
+                        setPx(x,y,v,v,v+4);
+                    }
+                }
+            }
+        });
+    } else if(modeId === 4) {
+        // Aurora: sweeping vertical curtain ribbons across full grid
+        const nz=(nx,ny)=>{let h=(nx*374761+ny*668265+nx*ny*93)&0xFFFFFF;h^=h<<13;h^=h>>17;h^=h<<5;return(h&255)/255;};
+        const snz=(fx,fy)=>{
+            const ix=Math.floor(fx),iy=Math.floor(fy),dx=fx-ix,dy=fy-iy;
+            return nz(ix,iy)*(1-dx)*(1-dy)+nz(ix+1,iy)*dx*(1-dy)+nz(ix,iy+1)*(1-dx)*dy+nz(ix+1,iy+1)*dx*dy;
+        };
+        for(let y=0;y<32;y++) for(let x=0;x<32;x++){
+            // Vertical curtains: high x frequency, low y frequency
+            const n1=snz(x*0.55,y*0.15);
+            const n2=snz(x*0.28+10,y*0.1+5);
+            const n3=snz(x*0.12+20,y*0.06+15);
+            const combined=(n1*3+n2*2+n3)/6;
+            let ribbon;
+            if(combined>0.6) ribbon=1;
+            else if(combined>0.4) ribbon=(combined-0.4)/0.2;
+            else if(combined>0.32) ribbon=(combined-0.32)*0.3/0.08;
+            else ribbon=0;
+            // Slightly brighter toward top
+            const vFade=0.8+0.2*((31-y)/31);
+            const bri=ribbon*vFade;
+            if(bri<0.02){
+                const s=rng()%255;
+                if(s>250){setPx(x,y,25,25,28);}
+                else{setPx(x,y,1,2,4);}
+                continue;
+            }
+            // Color: regions of green, cyan, pink
+            const hue=snz(x*0.35+30,y*0.09+40);
+            let r,g,b;
+            if(hue<0.47){r=8*bri;g=210*bri;b=40*bri;}
+            else if(hue<0.7){const t=(hue-0.47)/0.23;r=(8+t*12)*bri;g=(180-t*40)*bri;b=(80+t*50)*bri;}
+            else{const t=(hue-0.7)/0.3;r=(120+t*60)*bri;g=22*bri;b=(100+t*20)*bri;}
+            setPx(x,y,Math.min(255,r|0),Math.min(255,g|0),Math.min(255,b|0));
+        }
+    }
+    ctx.putImageData(img, 0, 0);
+}
+
+
+
+// Init
+document.addEventListener('DOMContentLoaded', () => {
+    populateWLEDModes();
+    setAppMode('images', { syncDevice: false });
+    loadData();
+    renderIntervalSwiper();
+    renderTransitionSwiper();
+    const fInp = document.getElementById('fileInp');
+    if(fInp) fInp.addEventListener('change', handleFileSelect);
+    // After heart animation completes, allow dot grid color changes (only on user click)
+    setTimeout(() => { window._logoDotsReady = true; }, 6000);
+});
+
+// Toast System
+function showToast(msg, duration=3000) {
+    const c = document.getElementById('toast-container');
+    const t = document.createElement('div');
+    t.className = 'toast';
+    t.innerHTML = msg;
+    c.appendChild(t);
+    requestAnimationFrame(() => t.classList.add('show'));
+    setTimeout(() => {
+        t.classList.remove('show');
+        setTimeout(() => t.remove(), 300);
+    }, duration);
+}
+
+function renderMemoryUsage(used, total) {
+    const storageText = document.getElementById('storageText');
+    const memBar = document.getElementById('memBar');
+    if (!storageText) return;
+
+    if (total && used !== undefined && used !== null) {
+        const fmtSize = (bytes) => bytes >= 1048576 ? (bytes / 1048576).toFixed(1) + ' MB' : (bytes / 1024).toFixed(1) + ' KB';
+        storageText.innerText = `Memory: ${fmtSize(used)} / ${fmtSize(total)}`;
+        if (memBar) memBar.style.width = `${Math.max(0, Math.min(100, (used / total) * 100))}%`;
+    } else {
+        storageText.innerText = 'Storage info unavailable';
+        if (memBar) memBar.style.width = '0%';
+    }
+}
+
+function setModeSwitchLocked(locked) {
+    const ids = ['matrix-mode-images', 'matrix-mode-effects', 'matrix-mode-settings'];
+    ids.forEach(id => {
+        const btn = document.getElementById(id);
+        if (!btn) return;
+        btn.disabled = locked;
+        btn.classList.toggle('upload-locked', locked);
+    });
+}
+
+// Data Loading
+async function loadData(){
+    try{
+        const r = await fetch('/list?ts='+Date.now());
+        if(!r.ok) throw new Error(`Request failed (${r.status})`);
+        const raw = await r.text();
+        let d = {};
+        try {
+            d = JSON.parse(raw);
+        } catch(_) {
+            // Keep storage visible even when /list JSON is malformed.
+            d = {};
+        }
+        
+        // Memory
+        let total = d.total;
+        let used = d.used;
+        if ((total === undefined || used === undefined) && raw) {
+            const mt = raw.match(/"total"\s*:\s*(\d+)/);
+            const mu = raw.match(/"used"\s*:\s*(\d+)/);
+            if (mt) total = parseInt(mt[1], 10);
+            if (mu) used = parseInt(mu[1], 10);
+        }
+        cachedStorageTotal = (typeof total === 'number') ? total : null;
+        cachedStorageUsed = (typeof used === 'number') ? used : null;
+        renderMemoryUsage(cachedStorageUsed, cachedStorageTotal);
+
+        // Matrix Settings
+        if(d.brightness !== undefined) {
+             const bv = document.getElementById('brightness');
+             if(bv) { bv.value = d.brightness; document.getElementById('brightVal').innerText = d.brightness; }
+        }
+        if(d.interval !== undefined) {
+             const iv = document.getElementById('interval');
+             if(iv) {
+                 iv.value = d.interval;
+                 renderIntervalSwiper();
+             }
+        }
+        if(d.transitionMode !== undefined) {
+             const tm = document.getElementById('transitionMode');
+             if(tm) {
+                 tm.value = d.transitionMode;
+                 renderTransitionSwiper();
+             }
+        }
+        
+        // WLED State
+        if(d.wledActive !== undefined) {
+             const act = document.getElementById('wled-active');
+             if(act) {
+                 act.checked = (d.wledActive === true || d.wledActive === "true");
+                 setWLEDStatus(act.checked);
+                 if(!hasInitializedMode) {
+                     let modeFromDevice = 'images';
+                     if (parseInt(d.deviceMode) === 1) modeFromDevice = 'wled';
+                     currentDeviceMode = modeFromDevice;
+                     setAppMode(modeFromDevice, { syncDevice: false });
+                     hasInitializedMode = true;
+                 }
+                 
+                 const wm = document.getElementById('wled-mode');
+                 if(wm) {
+                     wm.value = d.wledMode;
+                     // UI Update
+                     populateWLEDModes();
+                 }
+                 
+                 // Update Color Hidden Input
+                 const wc = document.getElementById('wled-color');
+                 if(wc) {
+                     wc.value = d.wledColor;
+                 }
+
+             }
+        }
+        // WiFi UI
+        const hasNetwork = d.ssid && d.ssid.length > 0 && d.pass_set;
+        if (hasNetwork) {
+            document.getElementById('wifiConnected').style.display = 'block';
+            document.getElementById('wifiEdit').style.display = 'none';
+            document.getElementById('wifiCurrentSSID').textContent = d.ssid;
+            const addrEl = document.getElementById('wifiLocalAddr');
+            if (addrEl && d.mdns) addrEl.textContent = d.mdns;
+        } else {
+            document.getElementById('wifiConnected').style.display = 'none';
+            document.getElementById('wifiEdit').style.display = 'block';
+        }
+
+    } catch(e) {
+        console.error(e);
+        renderMemoryUsage(null, null);
+    }
+    await loadGallery();
+}
+
+async function loadGallery() {
+    const l = document.getElementById('fileList');
+    if(!l) return;
+    l.innerHTML = '';
+    try {
+        const r = await fetch('/files?ts='+Date.now());
+        if(!r.ok) throw new Error(`Request failed (${r.status})`);
+        const files = await r.json();
+        if(!Array.isArray(files) || files.length === 0){
+            l.innerHTML = '<div class="text-sec" style="grid-column: 1 / -1; width: 100%; min-height:120px; display:flex; align-items:center; justify-content:center; text-align:center;">No images on Device.</div>';
+            return;
+        }
+
+        files.sort((a,b) => a.name.localeCompare(b.name));
+        files.forEach(f => {
+            const card = document.createElement('div');
+            card.className = 'file-card';
+            
+            const cvs = document.createElement('canvas');
+            cvs.width = W; cvs.height = H;
+            
+            const info = document.createElement('div');
+            info.className = 'file-info';
+            
+            const meta = document.createElement('div');
+            meta.className = 'file-meta';
+            meta.innerHTML = `
+                <div class="filename" title="${f.name}">${f.name.replace(/^\//, '')}</div>
+                <div class="filesize">${Math.round(f.size/1024)} KB</div>
+            `;
+            
+            const btn = document.createElement('button');
+            btn.className = 'btn-trash';
+            btn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"></path></svg>';
+            btn.onclick = () => deleteFile(f.name);
+
+            info.appendChild(meta);
+            info.appendChild(btn);
+            
+            card.appendChild(cvs);
+            card.appendChild(info);
+            l.appendChild(card);
+
+            // Tap to jump to this image on the frame
+            card.style.cursor = 'pointer';
+            card.addEventListener('click', (e) => {
+                if (e.target.closest('.btn-trash')) return; // don't jump on delete
+                jumpToImage(f.name, card);
+            });
+
+            loadThumb(f.name, cvs);
+        });
+    } catch(e) {
+        console.error(e);
+        l.innerHTML = '<div class="text-sec" style="text-align:center; padding:20px;">Unable to load images from device.</div>';
+    }
+}
+
+async function jumpToImage(name, card) {
+    // Highlight selected card
+    document.querySelectorAll('.file-card.selected').forEach(c => c.classList.remove('selected'));
+    if (card) card.classList.add('selected');
+
+    try {
+        const p = new URLSearchParams();
+        p.append('name', name);
+        await fetch('/jump', {method:'POST', body:p});
+    } catch(e) { console.error('Jump failed:', e); }
+}
+
+async function loadThumb(n, cvs) {
+    try {
+        const path = n && n.startsWith('/') ? n : '/' + n;
+        const r = await fetch(encodeURI(path));
+        if(!r.ok) return;
+        const b = await r.arrayBuffer();
+        if(b.byteLength < 2050) return; // Header(2) + 1 Frame (2048) min
+        const u8 = new Uint8Array(b);
+        // Draw first frame
+        drawFrame(new Uint8Array(u8.buffer, 2 + u8.byteOffset, 2048), cvs);
+    } catch(e){}
+}
+
+function drawFrame(d, cvs) {
+    const ctx = cvs.getContext('2d');
+    const id = ctx.createImageData(W, H);
+    const px = id.data;
+    const u16 = new Uint16Array(d.buffer, d.byteOffset, W*H);
+    for(let i=0; i<W*H; i++){
+        let p = u16[i];
+        let r = (p >> 11) & 0x1F;
+        let g = (p >> 5) & 0x3F;
+        let b = p & 0x1F;
+        px[i*4] = (r * 255) / 31;
+        px[i*4+1] = (g * 255) / 63;
+        px[i*4+2] = (b * 255) / 31;
+        px[i*4+3] = 255;
+    }
+    ctx.putImageData(id, 0, 0);
+}
+
+async function deleteFile(n) {
+    const normalized = (n || '').replace(/^\/+/, '');
+    if(!confirm(`Permanently delete "${normalized}"?`)) return;
+    try {
+        const r = await fetch('/delete?name='+encodeURIComponent(normalized), {method:'DELETE'});
+        if(r.ok) { showToast("File deleted"); loadData(); }
+        else showToast("Failed to delete");
+    } catch(e) { showToast("Error: " + e.message); }
+}
+
+// Processing Logic
+function resetUpload() {
+    uploadQueue = [];
+    document.getElementById('fileInp').value = '';
+    document.getElementById('dropZone').style.display = 'block';
+    document.getElementById('processArea').style.display = 'none';
+    document.getElementById('previewGrid').innerHTML = '';
+    const st = document.getElementById('statusText');
+    if (st) st.innerText = 'Ready';
+}
+
+async function handleFileSelect(e) {
+    let files = Array.from(e.target.files);
+    if(!files.length) return;
+
+    // Validation
+    let gifCount = 0;
+    for(let i=0; i<files.length; i++) if(files[i].type === 'image/gif') gifCount++;
+    if(gifCount > 1 || (gifCount === 1 && files.length > 1)) {
+        showToast("Slow Down! Upload GIFs one at a time.");
+        resetUpload();
+        return;
+    }
+
+    if (cachedStorageTotal && cachedStorageUsed !== null) {
+        const remaining = cachedStorageTotal - cachedStorageUsed;
+        if (gifCount === 0) {
+            const estimatedBytes = files.length * 2050;
+            if (estimatedBytes > remaining) {
+                showToast("Not enough free memory for this batch. Delete images or upload fewer files.");
+                resetUpload();
+                return;
+            }
+        } else {
+            const gifWorstCase = 2 + (MAX_FRAMES * 2048);
+            if (gifWorstCase > remaining) {
+                showToast("Not enough free memory for a GIF right now. Delete images first.");
+                resetUpload();
+                return;
+            }
+        }
+    }
+
+    // UI Switch
+    document.getElementById('dropZone').style.display = 'none';
+    document.getElementById('processArea').style.display = 'block';
+    
+    // Grid Layout Logic
+    const grid = document.getElementById('previewGrid');
+    grid.innerHTML = '';
+    const cnt = Math.min(files.length, 9); // Limit check to 9 for layout
+    if(cnt === 1) grid.style.gridTemplateColumns = "1fr";
+    else if(cnt === 2) grid.style.gridTemplateColumns = "1fr 1fr";
+    else grid.style.gridTemplateColumns = "repeat(3, 1fr)";
+
+    const st = document.getElementById('statusText');
+    const btn = document.getElementById('uploadBtn');
+    btn.disabled = true;
+    btn.innerText = "Processing...";
+    
+    uploadQueue = [];
+    
+    try {
+        for(let i=0; i<files.length; i++){
+            if(st) {
+                if(files.length > 1) st.innerText = `Processing ${i+1} of ${files.length}...`;
+                else st.innerText = "Processing...";
+            }
+            
+            if(files[i].type === 'image/gif') {
+                if(st) st.innerText += " this may take 10-20 seconds.";
+                await processGif(files[i]);
+            }
+            else await processImg(files[i]);
+        }
+        btn.disabled = false;
+        btn.innerText = "Send";
+        if(st) st.innerText = "Ready to upload";
+    } catch(err) {
+        showToast("Error: " + err.message);
+        resetUpload();
+    }
+}
+
+// Graphics Helpers
+function resize(ctx, sx, sy, sw, sh, tw, th){
+    const d = ctx.getImageData(sx,sy,sw,sh).data;
+    const buf = new Uint8ClampedArray(tw*th*4);
+    const xr = sw/tw, yr = sh/th;
+    for(let y=0; y<th; y++) for(let x=0; x<tw; x++){
+        let r=0,g=0,b=0,a=0,c=0;
+        let sy1 = Math.floor(y*yr), ey = Math.min(Math.ceil((y+1)*yr), sh);
+        let sx1 = Math.floor(x*xr), ex = Math.min(Math.ceil((x+1)*xr), sw);
+        for(let j=sy1; j<ey; j++) for(let i=sx1; i<ex; i++){
+            let idx = (j*sw+i)*4;
+            r += d[idx]; g += d[idx+1]; b += d[idx+2]; a += d[idx+3]; c++;
+        }
+        if(c > 0) {
+            let ti = (y*tw+x)*4;
+            buf[ti] = r/c; buf[ti+1] = g/c; buf[ti+2] = b/c; buf[ti+3] = a/c;
+        }
+    }
+    return new ImageData(buf, tw, th);
+}
+
+function toRGB565(ctx) {
+    const d = ctx.getImageData(0,0,W,H).data;
+    const b = new Uint16Array(W*H);
+    for(let i=0; i<W*H; i++){
+        let idx = i*4;
+        // R:5, G:6, B:5
+        b[i] = ((d[idx] & 0xF8) << 8) | ((d[idx+1] & 0xFC) << 3) | (d[idx+2] >> 3);
+    }
+    return new Uint8Array(b.buffer);
+}
+
+async function loadImg(f) {
+    return new Promise((resolve, reject) => {
+        const i = new Image();
+        i.onload = () => resolve(i);
+        i.onerror = reject;
+        i.src = URL.createObjectURL(f);
+    });
+}
+
+async function processImg(f) {
+    const img = await loadImg(f);
+    
+    // 1. Pre-process (Contrast/Sat)
+    const tc = document.createElement('canvas');
+    tc.width = img.width; tc.height = img.height;
+    const tctx = tc.getContext('2d');
+    tctx.filter = 'saturate(120%) contrast(110%)';
+    tctx.drawImage(img, 0, 0);
+
+    // 2. Resize/Crop to 32x32
+    const fc = document.createElement('canvas');
+    fc.width = W; fc.height = H;
+    const ctx = fc.getContext('2d');
+    const min = Math.min(img.width, img.height);
+    const id = resize(tctx, Math.floor((img.width-min)/2), Math.floor((img.height-min)/2), min, min, W, H);
+    ctx.putImageData(id, 0, 0);
+
+    // 3. Add to preview
+    const grid = document.getElementById('previewGrid');
+    if (grid.children.length < 9) {
+        const prevWrap = document.createElement('div');
+        prevWrap.className = 'preview-item';
+        prevWrap.appendChild(fc);
+        grid.appendChild(prevWrap);
+    }
+
+    // 4. Create Blob
+    // Header (2 bytes) = 1 frame
+    const h = new Uint16Array([1]);
+    const b = new Blob([h, toRGB565(ctx)], {type:'application/octet-stream'});
+    uploadQueue.push({blob:b, name:f.name});
+}
+
+async function processGif(f) {
+    const ab = await f.arrayBuffer();
+    const gif = new GIF(ab);
+    const frames = gif.decompressFrames(true);
+    
+    // Frame reduction
+    let sel = frames;
+    if(frames.length > MAX_FRAMES) {
+        const step = frames.length / MAX_FRAMES;
+        // Filter frames to max 60 evenly distributed
+        sel = [...new Set(Array.from({length:MAX_FRAMES}, (_,i)=>Math.floor(i*step)))].sort((a,b)=>a-b).map(i=>frames[i]);
+    }
+
+    // Prepare processing canvas
+    const tc = document.createElement('canvas');
+    let d0 = {width:100, height:100};
+    if(sel.length) d0 = sel[0].dims;
+    tc.width = d0.width; tc.height = d0.height;
+    const tctx = tc.getContext('2d');
+    // Stronger filter for GIFs usually
+    tctx.filter = 'saturate(150%) contrast(120%)';
+
+    const fc = document.createElement('canvas');
+    fc.width = W; fc.height = H;
+    const fctx = fc.getContext('2d');
+    
+    // Preview frames store
+    const previewFrames = []; 
+
+    const dat = [];
+    
+    for(let i=0; i<sel.length; i++) {
+        const fr = sel[i];
+        const dims = fr.dims;
+        const bm = await createImageBitmap(new ImageData(fr.patch, dims.width, dims.height));
+        tctx.drawImage(bm, dims.left, dims.top);
+        
+        const min = Math.min(tc.width, tc.height);
+        const rz = resize(tctx, Math.floor((tc.width-min)/2), Math.floor((tc.height-min)/2), min, min, W, H);
+        fctx.putImageData(rz, 0, 0);
+        
+        // Store for Animation
+        previewFrames.push(fctx.getImageData(0,0,W,H));
+
+        dat.push(toRGB565(fctx));
+
+        if(fr.disposalType === 2) tctx.clearRect(0,0,tc.width,tc.height);
+    }
+
+    // Build Preview Element
+    const grid = document.getElementById('previewGrid');
+    const pc = document.createElement('canvas'); 
+    pc.width = W; pc.height = H;
+    
+    // Only append to DOM if under limit
+    if (grid.children.length < 9) {
+        const pw = document.createElement('div'); 
+        pw.className='preview-item'; 
+        pw.appendChild(pc);
+        grid.appendChild(pw);
+    }
+    
+    // Animation Loop
+    if(previewFrames.length > 0) {
+        let fIdx = 0;
+        const animate = () => {
+            if(!pc.isConnected) return; // Stop if removed
+            pc.getContext('2d').putImageData(previewFrames[fIdx], 0, 0);
+            
+            // Calculate delay
+            let d = (sel[fIdx] && sel[fIdx].delay) ? sel[fIdx].delay : 100;
+            if(d < 20) d = 100; // Sanity check for bad delays
+            
+            fIdx = (fIdx + 1) % previewFrames.length;
+            setTimeout(animate, d);
+        };
+        animate();
+    }
+    
+    // Pack Blob
+    // Header (2 bytes) = N frames
+    const h = new Uint16Array([sel.length]);
+    const tot = 2 + (dat.length * 2048);
+    const comb = new Uint8Array(tot);
+    comb.set(new Uint8Array(h.buffer), 0);
+    let off = 2;
+    for(let d of dat) {
+        comb.set(d, off);
+        off += d.byteLength;
+    }
+    
+    uploadQueue.push({
+        blob: new Blob([comb], {type:'application/octet-stream'}),
+        name: f.name
+    });
+}
+
+async function uploadFiles() {
+    if(!uploadQueue.length || isUploading) return;
+    isUploading = true;
+    setModeSwitchLocked(true);
+    const btn = document.getElementById('uploadBtn');
+    const st = document.getElementById('statusText');
+    btn.disabled = true;
+    
+    let success = 0;
+    try {
+        for(let i=0; i<uploadQueue.length; i++) {
+            const item = uploadQueue[i];
+            if(uploadQueue.length > 1) btn.innerText = `Sending ${i+1}/${uploadQueue.length}...`;
+            else btn.innerText = "Sending...";
+            
+            // Sanitize filename to .bin
+            const base = item.name.replace(/\.[^/.]+$/, "");
+            const safeBase = base.replace(/[^a-zA-Z0-9._-]/g, "_");
+            const n = (safeBase || "image") + ".bin";
+            const fd = new FormData();
+            fd.append("file", item.blob, n);
+
+            if (cachedStorageTotal && cachedStorageUsed !== null) {
+                const remaining = cachedStorageTotal - cachedStorageUsed;
+                if (item.blob.size > remaining) {
+                    if (st) st.innerText = `Skipped ${n} (not enough memory)`;
+                    showToast(`Skipped ${n}: not enough free memory`);
+                    continue;
+                }
+            }
+            
+            try {
+                const r = await fetch('/upload', {method:'POST', body:fd});
+                if(r.ok) {
+                    success++;
+                    // Optimistic memory update for immediate UI feedback.
+                    if (cachedStorageTotal && cachedStorageUsed !== null) {
+                        cachedStorageUsed = Math.min(cachedStorageTotal, cachedStorageUsed + item.blob.size);
+                        renderMemoryUsage(cachedStorageUsed, cachedStorageTotal);
+                    }
+                    if (st) st.innerText = `Uploaded ${success}/${uploadQueue.length}`;
+                }
+            } catch(e) {}
+        }
+    } finally {
+        isUploading = false;
+        setModeSwitchLocked(false);
+    }
+    
+    // Jump to the last uploaded image on the frame
+    const lastItem = uploadQueue[uploadQueue.length - 1];
+    let lastBinName = null;
+    if (lastItem && success > 0) {
+        const base = lastItem.name.replace(/\.[^/.]+$/, "");
+        const safeBase = base.replace(/[^a-zA-Z0-9._-]/g, "_");
+        lastBinName = "/" + (safeBase || "image") + ".bin";
+        const p = new URLSearchParams();
+        p.append('name', lastBinName);
+        try { await fetch('/jump', {method:'POST', body:p}); } catch(e) {}
+    }
+
+    showToast(`Uploaded ${success} files successfully!`);
+    setTimeout(async () => {
+        resetUpload();
+        await loadData();
+        // Highlight the last uploaded image in the gallery
+        if (lastBinName) {
+            const cards = document.querySelectorAll('.file-card');
+            cards.forEach(c => {
+                const fn = c.querySelector('.filename');
+                if (fn && ('/' + fn.textContent) === lastBinName) {
+                    document.querySelectorAll('.file-card.selected').forEach(s => s.classList.remove('selected'));
+                    c.classList.add('selected');
+                }
+            });
+        }
+    }, 1500);
+}
+
+// Dot grid logo: match color to active mode button
+const _dotColors = {
+    images: '#c85a28',
+    wled: '#3a7abf',
+    settings: '#888'
+};
+function updateLogoDots(mode) {
+    if (!window._logoDotsReady) return;
+    const svg = document.querySelector('h1 .matrix-dots');
+    if (!svg) return;
+    const color = _dotColors[mode] || _dotColors.images;
+    // Strip CSS animations so JS can take over
+    svg.querySelectorAll('circle').forEach(c => { c.style.animation = 'none'; });
+    svg.style.fill = color;
+}
+
+function setAppMode(mode, opts = {}) {
+    const valid = ['images', 'wled', 'settings'];
+    const nextMode = valid.includes(mode) ? mode : 'images';
+    const syncDevice = opts.syncDevice !== false;
+    const userClick = opts.userClick === true;
+
+    if (isUploading && userClick && nextMode !== currentAppMode) {
+        showToast('Upload in progress. Finish or cancel before switching modes.');
+        return;
+    }
+
+    currentAppMode = nextMode;
+
+    valid.forEach(tab => {
+        const panel = document.getElementById('tab-' + tab);
+        if(panel) panel.style.display = (tab === nextMode ? 'block' : 'none');
+    });
+
+    const btnMap = {
+        images: document.getElementById('matrix-mode-images'),
+        wled: document.getElementById('matrix-mode-effects'),
+        settings: document.getElementById('matrix-mode-settings')
+    };
+    Object.keys(btnMap).forEach(k => {
+        const btn = btnMap[k];
+        if(!btn) return;
+        const active = k === nextMode;
+        btn.classList.toggle('active', active);
+        btn.setAttribute('aria-checked', String(active));
+    });
+
+    if (userClick) updateLogoDots(nextMode);
+
+    const effectsActive = nextMode === 'wled';
+    const sw = document.getElementById('wled-active');
+    if(sw) sw.checked = effectsActive;
+    setWLEDStatus(effectsActive);
+
+    if(syncDevice) {
+        if(nextMode === 'settings') return;
+        currentDeviceMode = nextMode;
+        if(nextMode === 'wled') {
+            toggleWLED(true);
+            saveModeOnly(1);
+        } else if(nextMode === 'images') {
+            toggleWLED(false);
+            saveModeOnly(0);
+        }
+    }
+}
+
+const throttledSave = throttle(() => saveMatrixSettings(true), 200);
+
+function handleBrightnessInput(val) {
+    document.getElementById('brightVal').innerText = val;
+    throttledSave();
+}
+
+function toggleAbout() {
+    const el = document.getElementById('aboutContent');
+    const icon = document.getElementById('aboutIcon');
+    if (el.style.display === 'none') {
+        el.style.display = 'block';
+        icon.innerHTML = '[-]';
+    } else {
+        el.style.display = 'none';
+        icon.innerHTML = '[+]';
+    }
+}
+
+function setWLEDStatus(active) {
+    // Status display removed; function kept for compatibility
+}
+
+async function toggleWLED(checked) {
+    setWLEDStatus(checked);
+    await sendWLEDUpdate();
+}
+
+const updateWLED = throttle(async () => {
+    await sendWLEDUpdate();
+}, 200);
+
+async function sendWLEDUpdate() {
+    const actEl = document.getElementById('wled-active');
+    const modeEl = document.getElementById('wled-mode');
+    const colEl = document.getElementById('wled-color');
+    if(!actEl || !modeEl || !colEl) return;
+    const act = actEl.checked;
+    const mode = modeEl.value;
+    
+    // Hidden input stores integer or hex string
+    let col = colEl.value;
+    
+    const params = new URLSearchParams();
+    params.append('active', act ? 'true' : 'false');
+    params.append('mode', mode);
+    params.append('color', col);
+
+    try {
+        await fetch('/wled', {method:'POST', body:params});
+    } catch(e) { console.error(e); }
+}
+
+function renderIntervalSwiper() {
+    const c = document.getElementById('interval-swiper');
+    if(!c) return;
+    c.innerHTML = '';
+    const currentVal = parseInt(document.getElementById('interval').value) || 10;
+    
+    INTERVAL_OPTIONS.forEach(opt => {
+        const el = document.createElement('div');
+        el.className = `swiper-pill ${opt.v === currentVal ? 'active' : ''}`;
+        el.innerText = opt.l;
+        el.onclick = () => {
+             document.getElementById('interval').value = opt.v;
+             Array.from(c.children).forEach(k => k.classList.remove('active'));
+             el.classList.add('active');
+             const p = new URLSearchParams();
+             p.append('interval', opt.v);
+             fetch('/settings', {method:'POST', body:p});
+        };
+        c.appendChild(el);
+    });
+}
+
+function renderTransitionSwiper() {
+    const c = document.getElementById('transition-swiper');
+    if(!c) return;
+    c.innerHTML = '';
+    const currentVal = parseInt(document.getElementById('transitionMode').value) || 0;
+
+    TRANSITION_OPTIONS.forEach(opt => {
+        const el = document.createElement('div');
+        el.className = `swiper-pill ${opt.v === currentVal ? 'active' : ''}`;
+        el.innerText = opt.l;
+        el.onclick = () => {
+             document.getElementById('transitionMode').value = opt.v;
+             Array.from(c.children).forEach(k => k.classList.remove('active'));
+             el.classList.add('active');
+             const p = new URLSearchParams();
+             p.append('transitionMode', opt.v);
+             fetch('/settings', {method:'POST', body:p});
+        };
+        c.appendChild(el);
+    });
+}
+
+async function saveMatrixSettings(silent = false) {
+    const b = document.getElementById('brightness').value;
+    const i = document.getElementById('interval').value;
+
+    if(i < 1) { showToast("Interval must be at least 1 second"); return; }
+
+    const params = new URLSearchParams();
+    params.append('brightness', b);
+    params.append('interval', i);
+
+    try {
+        const r = await fetch('/settings', {method:'POST', body:params});
+        if(r.ok) {
+            if(!silent) showToast("Settings saved!");
+        }
+        else showToast("Save failed");
+    } catch(e) { showToast("Error: " + e.message); }
+}
+
+async function saveModeOnly(modeId) {
+    const params = new URLSearchParams();
+    params.append('mode', modeId.toString());
+    try { await fetch('/settings', {method:'POST', body:params}); } catch(e) { console.error(e); }
+}
+
+function showWifiEdit() {
+    document.getElementById('wifiConnected').style.display = 'none';
+    document.getElementById('wifiEdit').style.display = 'block';
+}
+
+async function saveWifi(){
+    const s = document.getElementById('ssid').value;
+    const p = document.getElementById('pass').value;
+    const btn = document.getElementById('saveWifiBtn');
+    
+    if(!s || !p) { showToast("Please enter Name and Password"); return; }
+    
+    btn.disabled = true;
+    btn.innerText = "Saving...";
+    
+    const params = new URLSearchParams();
+    params.append('ssid', s);
+    params.append('pass', p);
+    
+    try {
+        const r = await fetch('/settings', {method:'POST', body:params});
+        if(r.ok) {
+            showToast("Saved! Rebooting device...");
+            btn.innerText = "Saved";
+            setTimeout(() => { btn.disabled = false; btn.innerText = "Save Configuration"; }, 3000);
+        } else {
+            showToast("Save failed");
+            btn.disabled = false;
+        }
+    } catch(e) {
+        showToast("Error: " + e.message);
+        btn.disabled = false;
+    }
+}
+</script>
+</body>
+</html>

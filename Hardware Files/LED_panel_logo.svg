@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <rect x="6" y="6" width="188" height="188" rx="4" fill="none" stroke="#000" stroke-width="2"/>
+  <g>
+    <!-- Row 1 -->
+    <circle cx="23" cy="23" r="4.5" fill="#000" opacity="0.85"/>
+    <circle cx="45" cy="23" r="2.8" fill="#000" opacity="0.55"/>
+    <circle cx="67" cy="23" r="5.2" fill="#000" opacity="0.95"/>
+    <circle cx="89" cy="23" r="3.0" fill="#000" opacity="0.60"/>
+    <circle cx="111" cy="23" r="4.0" fill="#000" opacity="0.80"/>
+    <circle cx="133" cy="23" r="2.2" fill="#000" opacity="0.45"/>
+    <circle cx="155" cy="23" r="5.0" fill="#000" opacity="0.90"/>
+    <circle cx="177" cy="23" r="3.5" fill="#000" opacity="0.65"/>
+    <!-- Row 2 -->
+    <circle cx="23" cy="45" r="3.2" fill="#000" opacity="0.60"/>
+    <circle cx="45" cy="45" r="5.5" fill="#000" opacity="1.0"/>
+    <circle cx="67" cy="45" r="2.5" fill="#000" opacity="0.50"/>
+    <circle cx="89" cy="45" r="4.8" fill="#000" opacity="0.88"/>
+    <circle cx="111" cy="45" r="2.0" fill="#000" opacity="0.40"/>
+    <circle cx="133" cy="45" r="5.2" fill="#000" opacity="0.95"/>
+    <circle cx="155" cy="45" r="3.8" fill="#000" opacity="0.70"/>
+    <circle cx="177" cy="45" r="2.6" fill="#000" opacity="0.48"/>
+    <!-- Row 3 -->
+    <circle cx="23" cy="67" r="5.0" fill="#000" opacity="0.92"/>
+    <circle cx="45" cy="67" r="3.5" fill="#000" opacity="0.65"/>
+    <circle cx="67" cy="67" r="2.0" fill="#000" opacity="0.42"/>
+    <circle cx="89" cy="67" r="5.5" fill="#000" opacity="1.0"/>
+    <circle cx="111" cy="67" r="3.0" fill="#000" opacity="0.58"/>
+    <circle cx="133" cy="67" r="4.5" fill="#000" opacity="0.82"/>
+    <circle cx="155" cy="67" r="2.2" fill="#000" opacity="0.44"/>
+    <circle cx="177" cy="67" r="4.8" fill="#000" opacity="0.90"/>
+    <!-- Row 4 -->
+    <circle cx="23" cy="89" r="2.8" fill="#000" opacity="0.52"/>
+    <circle cx="45" cy="89" r="4.2" fill="#000" opacity="0.78"/>
+    <circle cx="67" cy="89" r="5.5" fill="#000" opacity="1.0"/>
+    <circle cx="89" cy="89" r="3.0" fill="#000" opacity="0.55"/>
+    <circle cx="111" cy="89" r="5.0" fill="#000" opacity="0.92"/>
+    <circle cx="133" cy="89" r="2.5" fill="#000" opacity="0.46"/>
+    <circle cx="155" cy="89" r="4.5" fill="#000" opacity="0.88"/>
+    <circle cx="177" cy="89" r="3.2" fill="#000" opacity="0.62"/>
+    <!-- Row 5 -->
+    <circle cx="23" cy="111" r="4.2" fill="#000" opacity="0.78"/>
+    <circle cx="45" cy="111" r="2.2" fill="#000" opacity="0.42"/>
+    <circle cx="67" cy="111" r="4.8" fill="#000" opacity="0.88"/>
+    <circle cx="89" cy="111" r="2.5" fill="#000" opacity="0.48"/>
+    <circle cx="111" cy="111" r="3.8" fill="#000" opacity="0.72"/>
+    <circle cx="133" cy="111" r="5.5" fill="#000" opacity="1.0"/>
+    <circle cx="155" cy="111" r="3.0" fill="#000" opacity="0.56"/>
+    <circle cx="177" cy="111" r="5.2" fill="#000" opacity="0.94"/>
+    <!-- Row 6 -->
+    <circle cx="23" cy="133" r="5.2" fill="#000" opacity="0.95"/>
+    <circle cx="45" cy="133" r="3.0" fill="#000" opacity="0.58"/>
+    <circle cx="67" cy="133" r="4.0" fill="#000" opacity="0.75"/>
+    <circle cx="89" cy="133" r="5.0" fill="#000" opacity="0.90"/>
+    <circle cx="111" cy="133" r="2.2" fill="#000" opacity="0.44"/>
+    <circle cx="133" cy="133" r="3.5" fill="#000" opacity="0.66"/>
+    <circle cx="155" cy="133" r="5.5" fill="#000" opacity="1.0"/>
+    <circle cx="177" cy="133" r="2.8" fill="#000" opacity="0.50"/>
+    <!-- Row 7 -->
+    <circle cx="23" cy="155" r="3.5" fill="#000" opacity="0.66"/>
+    <circle cx="45" cy="155" r="5.0" fill="#000" opacity="0.90"/>
+    <circle cx="67" cy="155" r="2.8" fill="#000" opacity="0.50"/>
+    <circle cx="89" cy="155" r="4.2" fill="#000" opacity="0.78"/>
+    <circle cx="111" cy="155" r="5.5" fill="#000" opacity="1.0"/>
+    <circle cx="133" cy="155" r="2.5" fill="#000" opacity="0.46"/>
+    <circle cx="155" cy="155" r="4.0" fill="#000" opacity="0.74"/>
+    <circle cx="177" cy="155" r="3.2" fill="#000" opacity="0.60"/>
+    <!-- Row 8 -->
+    <circle cx="23" cy="177" r="2.5" fill="#000" opacity="0.48"/>
+    <circle cx="45" cy="177" r="4.5" fill="#000" opacity="0.82"/>
+    <circle cx="67" cy="177" r="3.2" fill="#000" opacity="0.60"/>
+    <circle cx="89" cy="177" r="2.0" fill="#000" opacity="0.40"/>
+    <circle cx="111" cy="177" r="4.8" fill="#000" opacity="0.88"/>
+    <circle cx="133" cy="177" r="5.0" fill="#000" opacity="0.92"/>
+    <circle cx="155" cy="177" r="2.8" fill="#000" opacity="0.52"/>
+    <circle cx="177" cy="177" r="4.2" fill="#000" opacity="0.80"/>
+  </g>
+</svg>
