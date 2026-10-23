@@ -61,6 +61,7 @@ MatrixPanel_I2S_DMA *dma_display = nullptr;
 String station_ssid = "";
 String station_password = "";
 char   ap_ssid[16]  = "";        // e.g. "Panel_C3D4"
+char   panelId[5]   = "";        // e.g. "C3D4" — shown on the panel so users know which network to join
 char   hostName[20] = "";        // e.g. "led-panelc3d4" -> led-panelc3d4.local
 const char *ap_password = "";    // Open network
 
@@ -134,38 +135,16 @@ void shufflePixelOrder() {
 }
 
 // ===========================================================================
-// Tiny 3x5 font — just enough to draw the "ADD IMAGES" empty-state message
-// Packed PROGMEM glyphs for A D E G I M S (indices 0-6), 7 = space.
+// Centered text, drawn with the Adafruit_GFX font built into the panel library.
 // ===========================================================================
-static const uint8_t PROGMEM tinyFont[] = {
-  0b010,0b101,0b111,0b101,0b101, // A
-  0b110,0b101,0b101,0b101,0b110, // D
-  0b111,0b100,0b110,0b100,0b111, // E
-  0b011,0b100,0b101,0b101,0b011, // G
-  0b111,0b010,0b010,0b010,0b111, // I
-  0b101,0b111,0b111,0b101,0b101, // M
-  0b011,0b100,0b010,0b001,0b110, // S
-  0b000,0b000,0b000,0b000,0b000  // space
-};
-
-void drawTinyText(int16_t x, int16_t y, const char *s, uint16_t color) {
-  while (*s) {
-    uint8_t idx;
-    switch (*s) {
-      case 'A': idx = 0; break; case 'D': idx = 1; break;
-      case 'E': idx = 2; break; case 'G': idx = 3; break;
-      case 'I': idx = 4; break; case 'M': idx = 5; break;
-      case 'S': idx = 6; break; default:  idx = 7; break;
-    }
-    const uint8_t *glyph = tinyFont + idx * 5;
-    for (int r = 0; r < 5; r++) {
-      uint8_t row = pgm_read_byte(glyph + r);
-      for (int c = 0; c < 3; c++)
-        if (row & (1 << (2 - c))) dma_display->drawPixel(x + c, y + r, color);
-    }
-    x += 4;
-    s++;
-  }
+void drawTextCentered(int16_t y, const char *s, uint16_t color) {
+  int16_t x1, y1; uint16_t w, h;
+  dma_display->setTextWrap(false);
+  dma_display->setTextSize(1);
+  dma_display->setTextColor(color);
+  dma_display->getTextBounds(s, 0, y, &x1, &y1, &w, &h);
+  dma_display->setCursor((32 - (int)w) / 2, y);
+  dma_display->print(s);
 }
 
 // ===========================================================================
@@ -621,12 +600,11 @@ void setupWiFi() {
   uint8_t mac[6];
   esp_read_mac(mac, ESP_MAC_WIFI_STA);
   const char h[] = "0123456789ABCDEF";
-  snprintf(ap_ssid, sizeof(ap_ssid), "Panel_%c%c%c%c",
+  snprintf(panelId, sizeof(panelId), "%c%c%c%c",
            h[(mac[4] >> 4) & 0xF], h[mac[4] & 0xF],
            h[(mac[5] >> 4) & 0xF], h[mac[5] & 0xF]);
-  snprintf(hostName, sizeof(hostName), "led-panel%c%c%c%c",
-           h[(mac[4] >> 4) & 0xF], h[mac[4] & 0xF],
-           h[(mac[5] >> 4) & 0xF], h[mac[5] & 0xF]);
+  snprintf(ap_ssid, sizeof(ap_ssid), "Panel_%s", panelId);
+  snprintf(hostName, sizeof(hostName), "led-panel%s", panelId);
 
   WiFi.softAP(ap_ssid, ap_password);   // always-on direct access point
 
@@ -730,12 +708,12 @@ void loop() {
   }
 
   // --- Images mode: empty state ---
+  // Nothing uploaded yet: show which WiFi network to join (Panel_XXXX).
   if (playlist_count == 0) {
     if (!placeholderDrawn) {
       dma_display->fillScreen(dma_display->color565(0, 0, 0));
-      uint16_t textColor = dma_display->color565(220, 220, 220);
-      drawTinyText(11, 11, "ADD", textColor);
-      drawTinyText(5, 17, "IMAGES", textColor);
+      drawTextCentered(7,  "WIFI",  dma_display->color565(255, 255, 255));
+      drawTextCentered(18, panelId, dma_display->color565(58, 122, 191));  // steel blue
       placeholderDrawn = true;
     }
     return;

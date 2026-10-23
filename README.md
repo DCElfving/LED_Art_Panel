@@ -19,7 +19,6 @@ with a new look, new effects, new features, or a by creating a completely differ
 - [What you'll build](#what-youll-build)
 - [What you need](#what-you-need)
 - [Get started from zero](#get-started-from-zero)
-- [Try it without hardware](#try-it-without-hardware)
 - [How the project is organized](#how-the-project-is-organized)
 - [Make it your own](#make-it-your-own)
 - [Working with an AI assistant](#working-with-an-ai-assistant)
@@ -77,6 +76,19 @@ common ground.)
 
 This walks you through everything, assuming a brand-new computer with no
 development tools. It takes about 20–30 minutes the first time.
+
+> **Or let the setup program do Steps 1–5:** `Setup-Mac`, `Setup-Windows.exe`
+> or `Setup-Linux` (or `python3 setup_panel.py`) installs the Arduino IDE,
+> Rosetta (Apple Silicon Macs), Apple's Command Line Developer Tools (Macs; the
+> ESP32 build needs their Python), the USB drivers (or checks for them), the ESP32
+> core (only the original-ESP32 parts, about 500 MB), the libraries and the
+> LittleFS plugin, then test-compiles. It never uploads anything to a panel and
+> runs from anywhere (inside this folder, it test-compiles this sketch). Run it
+> again any time; `check` only reports. If macOS says it "could not verify" the
+> program, open **System Settings → Privacy & Security** and click **Open
+> Anyway**; on Windows click **More info → Run anyway**. If it fails, it saves
+> **LED Art Panel setup log.txt** on the Desktop. See
+> [Building the setup program](#building-the-setup-program).
 
 ### 1. Install the Arduino IDE
 
@@ -156,6 +168,8 @@ This copies everything in `LED_Art_Panel/data/` (the web page) into the panel.
 
 On first power-up (with no WiFi saved yet) the panel creates its **own open WiFi
 hotspot** named **`Panel_XXXX`** (where `XXXX` is unique to your board).
+Until you upload an image, the panel shows **WIFI** with those four characters
+underneath (e.g. **C3D4** for `Panel_C3D4`), so you know which network to join.
 
 1. Join that `Panel_XXXX` network from your phone/computer.
 2. Open a browser to the panel — try **`http://led-panelXXXX.local`** or the
@@ -164,23 +178,6 @@ hotspot** named **`Panel_XXXX`** (where `XXXX` is unique to your board).
    it on your normal network afterward (it will reboot to apply).
 
 That's it — you have a working LED art panel.
-
----
-
-## Try it without hardware
-
-You can develop and preview the **web interface** on your computer with no ESP32
-attached, using the included mock server (plain Python, no extra installs):
-
-```bash
-cd LED_Art_Panel
-python3 mock_server.py
-```
-
-Open <http://localhost:8000>. It emulates the device's web endpoints, so you can
-edit `data/index.html`, save, and refresh to see changes instantly. This is the
-fastest way to iterate on the UI. (Run it from **inside** the `LED_Art_Panel`
-folder — it uses relative paths.)
 
 ---
 
@@ -193,7 +190,8 @@ folder — it uses relative paths.)
 | `MinimalFX.h` | A tiny effects-engine helper that pushes pixels to the panel (keeps the program small). |
 | `PlaybackState.h` | Reads one image file from flash and holds the current frame. |
 | `data/index.html` | The entire web control page (HTML + CSS + JavaScript in one file). |
-| `mock_server.py` | Local stand-in for the device, for testing the UI without hardware. |
+| `setup_panel.py` | Sets up a student computer (Arduino IDE, drivers, ESP32 package, libraries). See Get started from zero. |
+| `sketch.yaml` | This sketch's board settings (ESP32 Dev Module, No OTA partition scheme), read by `setup_panel.py`. |
 
 **Three display modes:** *Images* (uploaded art), *Effects* (generative), and the
 firmware also supports adding more. Settings (brightness, timing, WiFi) are saved
@@ -208,8 +206,8 @@ heavy image work. (Format details in [Technical reference](#technical-reference)
 ## Make it your own
 
 This project is meant to be a **starting point**. Here's how to take it in your
-own direction. The mock server (above) lets you try UI changes instantly; code
-changes to the firmware need a re-flash (steps 7–8).
+own direction. Firmware changes need a re-flash (step 7); web page changes need
+the `data/` folder re-uploaded (step 8).
 
 ### Give it a new look (redesign the UI)
 
@@ -219,8 +217,6 @@ block). Nothing is loaded from the internet, so it works offline on the device.
 
 - To restyle, edit the `<style>` block. The color palette is defined once at the
   top (CSS variables under `:root`), so changing a few values reskins the whole page.
-- Run `python3 mock_server.py` and edit against <http://localhost:8000> for a
-  fast edit-save-refresh loop.
 - When you like it, re-upload the `data/` folder (step 8) to put it on the device.
 
 Ideas: a different theme or font, larger touch targets, a simplified single-screen
@@ -277,7 +273,7 @@ Copilot** can help you modify it. Tips:
 - **Point the assistant at this README and the file you want to change.** Say what
   you want in plain language: *"Add a new effect to `Effect2D.h` that looks like
   falling snow, and register it in the UI."*
-- **Iterate on the UI with the mock server running** so you can see each change.
+- **Upload and check each change on the panel** before asking for the next one.
 - **Always tell the assistant the build constraints below** — the ESP32 core
   version and the two-part flash trip people (and agents) up.
 
@@ -293,8 +289,8 @@ Copilot** can help you modify it. Tips:
 - Device identity is derived from the factory MAC via
   `esp_read_mac(mac, ESP_MAC_WIFI_STA)` — **not** `WiFi.macAddress()`, which
   returns zeros in AP-only mode.
-- Test UI changes against `mock_server.py`; keep its `/list` JSON in sync with the
-  firmware when you add settings.
+- When adding a setting, expose it in `handleList()`'s `/list` JSON and wire it
+  into `data/index.html`.
 
 ---
 
@@ -310,6 +306,28 @@ The essentials, in one place:
   (`Ctrl/⌘+Shift+P → Upload LittleFS`, Serial Monitor closed).
 - **Naming:** each panel auto-names itself `Panel_XXXX` (hotspot) and
   `led-panelXXXX.local` (on your network) from its factory MAC — unique per board.
+
+---
+
+### Building the setup program
+
+`setup_panel.py` is plain Python (standard library only) and is the same file
+as in the networked version, which also has a draft pre-class email for
+students (`STUDENT_EMAIL.md`). This sketch's board settings come from
+`sketch.yaml`. The double-click versions are made with
+[PyInstaller](https://pyinstaller.org): `.github/workflows/build-setup.yml`
+builds `Setup-Mac` (one universal program for every Mac), `Setup-Windows.exe`
+and `Setup-Linux` on GitHub (**Actions → Build setup executables → Run
+workflow**, then download them from the run's **Artifacts**). Windows USB
+drivers placed in `drivers/` are packed inside them; see `drivers/README.txt`.
+To build only the one for the computer you're on:
+
+```bash
+pip install pyinstaller certifi
+pyinstaller --onefile --console --add-data "drivers:drivers" --name Setup-Mac setup_panel.py
+```
+
+The programs aren't signed, so macOS and Windows warn the first time.
 
 ---
 

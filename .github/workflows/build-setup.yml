@@ -1,0 +1,64 @@
+# Builds the student setup program (setup_panel.py) as a double-clickable
+# executable for each system. Run it from the Actions tab ("Run workflow"),
+# then download the three files from the run's Artifacts and share them with
+# students (see STUDENT_EMAIL.md).
+#
+# The Mac and Linux programs are zipped: a bare program downloaded by a
+# browser (or uploaded as an artifact) loses its "executable" permission and
+# won't open when double-clicked. A zip keeps it.
+#
+# Windows USB drivers placed in drivers/ (see drivers/README.txt) are packed
+# inside every executable.
+name: Build setup executables
+
+on:
+  workflow_dispatch:
+  push:
+    paths: [setup_panel.py, drivers/**, .github/workflows/build-setup.yml]
+
+jobs:
+  mac:
+    # One "universal" program that runs natively on both Apple Silicon and
+    # Intel Macs. That needs python.org's universal Python, not the runner's.
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install universal Python from python.org
+        run: |
+          curl -sSLo python.pkg https://www.python.org/ftp/python/3.13.9/python-3.13.9-macos11.pkg
+          sudo installer -pkg python.pkg -target /
+      - name: Build
+        run: |
+          PY=/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13
+          $PY -m pip install pyinstaller==6.22.3 certifi   # certifi: trusted HTTPS certificates
+          $PY -m PyInstaller --onefile --console --target-arch universal2 \
+            --add-data "drivers:drivers" --name Setup-Mac setup_panel.py
+          lipo -archs dist/Setup-Mac     # should print: x86_64 arm64
+          ditto -c -k dist/Setup-Mac Setup-Mac.zip     # zip keeps the executable bit
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Setup-Mac
+          path: Setup-Mac.zip
+
+  windows-linux:
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            name: Setup-Windows
+          - os: ubuntu-22.04        # older glibc, so it runs on more Linux versions
+            name: Setup-Linux
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: pip install pyinstaller==6.22.3 certifi
+      - run: pyinstaller --onefile --console --add-data "drivers:drivers" --name ${{ matrix.name }} setup_panel.py
+      - if: runner.os == 'Linux'
+        run: cd dist && zip Setup-Linux.zip Setup-Linux && rm Setup-Linux
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.name }}
+          path: dist/*

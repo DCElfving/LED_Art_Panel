@@ -1,0 +1,6 @@
+# macOS Finder files
+.DS_Store
+
+# Built setup programs (made by .github/workflows/build-setup.yml; hand them
+# out from a release or shared folder rather than committing them)
+dist/
