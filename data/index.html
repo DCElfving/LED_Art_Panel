@@ -489,13 +489,17 @@ input:focus {
 /* File List */
 .file-list {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  /* Two equal columns. minmax(0, ...) lets a column shrink below its longest
+     filename; plain "1fr 1fr" let long names widen one column (and its
+     thumbnails, which are 100% wide and square). */
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
   padding: 0;
 }
 .file-card {
   display: flex;
   flex-direction: column;
+  min-width: 0;            /* allow the card to be narrower than its filename */
   background: rgba(0,0,0,0.3);
   border: 1px solid var(--border);
   padding: 12px;
