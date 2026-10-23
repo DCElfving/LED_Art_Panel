@@ -220,7 +220,9 @@ def finish(code=0):
         say("\n  A record of everything above is saved in:")
         say("    " + LOG_PATH)
         say("  If you can't fix it, email that file to your instructor.")
-    if FROZEN:
+    # Only when someone's at the keyboard: an unattended run (the automatic
+    # test on GitHub) has no keyboard and would wait forever.
+    if FROZEN and sys.stdin and sys.stdin.isatty():
         input("\n  Press Enter to close this window. ")
     sys.exit(code)
 
@@ -862,6 +864,12 @@ def do_check():
             ok("Rosetta installed")
         else:
             warn("Rosetta not installed")
+    if SYSTEM == "Windows":
+        for vid, installed in windows_drivers_installed().items():
+            if installed:
+                ok(USB_CHIPS[vid][0] + " USB driver installed")
+            else:
+                warn(USB_CHIPS[vid][0] + " USB driver not installed")
     if SYSTEM == "Darwin":
         if apple_tools_installed():
             ok("Apple Command Line Developer Tools installed")

@@ -9,6 +9,11 @@
 #
 # Windows USB drivers placed in drivers/ (see drivers/README.txt) are packed
 # inside every executable.
+#
+# The Windows job also TESTS the program: it runs the whole setup unattended on
+# GitHub's fresh Windows machine (IDE, USB driver, ESP32 package, libraries,
+# test compile), then "check", and saves the setup log as the "Setup-Windows-log"
+# artifact. A red X on "Test" means the setup failed there; read that log.
 name: Build setup executables
 
 on:
@@ -62,3 +67,24 @@ jobs:
         with:
           name: ${{ matrix.name }}
           path: dist/*
+
+      # ---- Windows only: run the program the way a student would, unattended.
+      - name: Test - full setup
+        if: runner.os == 'Windows'
+        run: dist\Setup-Windows.exe --yes
+      - name: Test - check what was installed
+        if: runner.os == 'Windows'
+        run: dist\Setup-Windows.exe check
+      - name: Collect the setup log
+        if: always() && runner.os == 'Windows'
+        run: |
+          foreach ($d in "$env:USERPROFILE\OneDrive\Desktop", "$env:USERPROFILE\Desktop", "$env:USERPROFILE") {
+            $log = Join-Path $d "LED Art Panel setup log.txt"
+            if (Test-Path $log) { Copy-Item $log setup-log.txt; break }
+          }
+      - if: always() && runner.os == 'Windows'
+        uses: actions/upload-artifact@v4
+        with:
+          name: Setup-Windows-log
+          path: setup-log.txt
+          if-no-files-found: warn

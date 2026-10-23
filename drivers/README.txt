@@ -1,5 +1,11 @@
-USB drivers for Windows (optional, for instructors)
-===================================================
+USB drivers for Windows
+=======================
+
+INCLUDED: CP210x_Universal_Windows_Driver/ (Silicon Labs, version 11.6.0.420,
+downloaded 2026-10-22 from the page below, unmodified). The class's ELEGOO
+ESP-WROOM-32 USB-C boards use a CP2102 chip (USB ID 10C4:EA60), so this is the
+only driver they need. See SLAB_License_Agreement_VCP_Windows.txt inside it.
+
 
 macOS and Linux already include the drivers the ESP32 needs. On Windows,
 setup_panel.py checks for them, but it can't download them itself: the vendors'

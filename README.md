@@ -322,6 +322,10 @@ workflow**, then download them from the run's **Artifacts**). Windows USB
 drivers placed in `drivers/` are packed inside them; see `drivers/README.txt`.
 To build only the one for the computer you're on:
 
+The Windows job also tests `Setup-Windows.exe`: it runs the whole setup
+unattended on GitHub's fresh Windows machine, then `check`, and saves the
+**Setup-Windows-log** artifact. A red X on a "Test" step means it failed there.
+
 ```bash
 pip install pyinstaller certifi
 pyinstaller --onefile --console --add-data "drivers:drivers" --name Setup-Mac setup_panel.py
