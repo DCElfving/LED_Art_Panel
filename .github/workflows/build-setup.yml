@@ -14,11 +14,25 @@
 # GitHub's fresh Windows machine (IDE, USB driver, ESP32 package, libraries,
 # test compile), then "check", and saves the setup log as the "Setup-Windows-log"
 # artifact. A red X on "Test" means the setup failed there; read that log.
+#
+# RELEASES: push a tag starting with "v" (e.g. v1.0; GitHub Desktop: History,
+# right-click the commit, Create Tag, then Push origin). After all the builds
+# and the Windows test pass, the "release" job publishes Setup-Mac.zip,
+# Setup-Windows.exe and Setup-Linux.zip as a GitHub Release. Anyone can
+# download those without a GitHub account, and these links always point at
+# the newest release:
+#   https://github.com/DCElfving/LED_Art_Panel/releases/latest/download/Setup-Mac.zip
+#   https://github.com/DCElfving/LED_Art_Panel/releases/latest/download/Setup-Windows.exe
+#   https://github.com/DCElfving/LED_Art_Panel/releases/latest/download/Setup-Linux.zip
 name: Build setup executables
 
 on:
   workflow_dispatch:
   push:
+    # Branch pushes: only when the setup program changes. Tag pushes: always
+    # (GitHub ignores "paths" for tags).
+    branches: ["**"]
+    tags: ["v*"]
     paths: [setup_panel.py, drivers/**, .github/workflows/build-setup.yml]
 
 jobs:
@@ -88,3 +102,30 @@ jobs:
           name: Setup-Windows-log
           path: setup-log.txt
           if-no-files-found: warn
+
+  release:
+    # Only for version tags, and only after every build and the Windows test passed.
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [mac, windows-linux]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+      - name: Publish the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          files="artifacts/Setup-Mac/Setup-Mac.zip artifacts/Setup-Windows/Setup-Windows.exe artifacts/Setup-Linux/Setup-Linux.zip"
+          ls -l $files
+          notes="Setup programs for student computers. Download the one for your computer:
+          - Setup-Mac.zip: any Mac (Apple chip or Intel). Unzip, then double-click Setup-Mac.
+          - Setup-Windows.exe: Windows 10/11.
+          - Setup-Linux.zip: 64-bit Linux."
+          # Create the release, or update it if one already exists for this tag.
+          gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1 ||
+            gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --title "LED Art Panel setup $TAG" --notes "$notes"
+          gh release upload "$TAG" $files --repo "$GITHUB_REPOSITORY" --clobber
