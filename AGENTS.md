@@ -25,7 +25,8 @@ sketch + a self-contained web page.
 ## Build & flash constraints (do not violate)
 - **ESP32 Arduino core: 3.3.x stable.** NOT 4.x-alpha (removes `driver/i2s.h` →
   build fails), NOT 2.x.
-- **Library:** `ESP32-HUB75-MatrixPanel-DMA` (MrCodetastic), v3.0.14+.
+- **Library:** `ESP32-HUB75-MatrixPanel-DMA` (MrCodetastic), v3.0.14+; `setup_panel.py` installs 3.1.0
+  (tested on a panel 2026-10-23).
 - **Partition scheme:** "No OTA (1MB APP / 3MB SPIFFS)".
 - **macOS needs Apple's Command Line Developer Tools:** the ESP32 core runs `python3`
   on every build and upload, and `/usr/bin/python3` is only a stub without them.

@@ -59,8 +59,10 @@ from pathlib import Path
 # after checking the sketch still compiles and runs.
 IDE_VERSION = "2.3.10"
 ESP32_CORE_VERSION = "3.3.12"
+# "@version" is the version installed and the oldest one accepted: a newer
+# one the student already has (e.g. updated in the IDE) is left alone.
 LIBRARIES = [
-    "ESP32 HUB75 LED MATRIX PANEL DMA Display@3.0.14",
+    "ESP32 HUB75 LED MATRIX PANEL DMA Display@3.1.0",
     "Adafruit GFX Library",          # the HUB75 library draws through this
 ]
 ARDUINO_CLI_VERSION = "1.5.1"        # Linux only: the IDE's own copy isn't reachable there
@@ -641,9 +643,15 @@ def installed_libraries(cli):
         found[lib.get("name")] = lib.get("version")
     return found
 
+def version_tuple(v):
+    """'3.0.14' -> (3, 0, 14), so versions compare as numbers, not text."""
+    return tuple(int(part) if part.isdigit() else 0 for part in v.split("."))
+
 def library_ok(libs, spec):
+    """Installed, and at least the version we ask for."""
     name, _, want = spec.partition("@")
-    return libs.get(name) is not None and (not want or libs[name] == want)
+    have = libs.get(name)
+    return have is not None and (not want or version_tuple(have) >= version_tuple(want))
 
 
 # ---- 5-7. Board package, libraries, LittleFS plugin -----------------------------------

@@ -123,7 +123,7 @@ install the driver for your board's USB-serial chip — usually **CP210x**
 ### 4. Install the LED matrix library
 
 **Tools → Manage Libraries…**, search **ESP32 HUB75 LED MATRIX PANEL DMA Display**
-(by *MrCodetastic*) and install it (version 3.0.14 or later).
+(by *MrCodetastic*) and install it (version 3.1.0, the one the class uses, or later).
 
 ### 5. Install the filesystem uploader (for the web page)
 
@@ -300,7 +300,8 @@ The essentials, in one place:
 
 - **ESP32 Arduino core: 3.3.x stable.** 4.x-alpha fails with
   `driver/i2s.h: No such file or directory`; 2.x is too old.
-- **Library:** `ESP32-HUB75-MatrixPanel-DMA` (MrCodetastic), v3.0.14+.
+- **Library:** `ESP32-HUB75-MatrixPanel-DMA` (MrCodetastic), v3.0.14+ (the setup
+  program installs 3.1.0).
 - **Partition scheme:** "No OTA (1MB APP / 3MB SPIFFS)."
 - **Two uploads:** sketch (Upload button) **and** web page
   (`Ctrl/⌘+Shift+P → Upload LittleFS`, Serial Monitor closed).
