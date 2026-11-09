@@ -25,7 +25,7 @@ with a new look, new effects, new features, or a by creating a completely differ
 - [Get started from zero](#get-started-from-zero)
 - [How the project is organized](#how-the-project-is-organized)
 - [Make it your own](#make-it-your-own)
-- [Free and open source](#free-and-open-source)
+- [Open source](#open-source)
 - [Working with an AI assistant](#working-with-an-ai-assistant)
 - [Build & flash reference](#build--flash-reference)
 - [Troubleshooting](#troubleshooting)
@@ -61,8 +61,10 @@ You control brightness, timing, effects, and WiFi from that web page.
 - A **32×32 HUB75 RGB LED matrix panel**.
 - A **5V power supply** sized for the panel (a 32×32 panel can draw up to ~2–4A
   at full brightness — don't try to power the LEDs from the ESP32's USB). If using the LED Art Panel PCB, you *can* power the project with a USB-C cable and power supply.
-- The LED Art Panel PCB and connectors, *or* a ribbon cable with jumper wires to connect the
-  ESP32 to the panel's HUB75 header.
+- The LED Art Panel PCB and connectors. The ESP32 plugs into the PCB, and the PCB
+  mounts directly onto the **HUB75 input socket** on the back of the LED panel, so
+  no ribbon cable is needed. (Without the PCB, use jumper wires from the ESP32 to
+  the panel's HUB75 socket instead.)
 
 <p align="center">
   <img src="docs/images/esp32-and-pcb.jpg" alt="USB-C ESP32 DevKit next to two bare LED Art Panel PCBs" width="400">
@@ -96,7 +98,7 @@ common ground.)
 
 ## Get started from zero
 
-A free setup program installs everything your computer needs, so there are no
+An open-source setup program installs everything your computer needs, so there are no
 commands to type. You don't need your panel for this part.
 
 **You'll need:** a Mac, Windows or Linux computer (not a Chromebook or iPad),
@@ -201,7 +203,9 @@ has the same name as its `.ino` file.
 
 ### 4. Upload the program
 
-1. Plug the panel's ESP32 into your computer with a USB cable.
+1. Plug the ESP32 into the PCB, and press the PCB directly onto the HUB75 input
+   socket on the back of the LED panel. Then plug the ESP32 into your computer
+   with a USB-C cable.
 2. Open `LED_Art_Panel/LED_Art_Panel.ino` in the Arduino IDE.
 3. Set these in the **Tools** menu:
    - **Board → esp32 → ESP32 Dev Module** (exactly that one, not S2, S3 or C3)
@@ -316,9 +320,9 @@ visualizer, a status board driven by web requests.
 
 ---
 
-## Free and open source
+## Open source
 
-Everything here is free: the firmware, the web page, the PCB design and Gerbers, the
+Everything here is open source and available to anyone: the firmware, the web page, the PCB design and Gerbers, the
 laser-cut templates, the [bill of materials](./BOM.md) and these instructions. It's
 released under [CC0 1.0](./LICENSE), so it's in the public domain. You don't need
 permission, and credit is appreciated but not required.
