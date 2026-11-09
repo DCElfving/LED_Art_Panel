@@ -38,7 +38,9 @@ jobs:
   mac:
     # One "universal" program that runs natively on both Apple Silicon and
     # Intel Macs. That needs python.org's universal Python, not the runner's.
-    runs-on: macos-14
+    # The installed Python (not the runner's macOS) sets the oldest macOS the
+    # program runs on, so "latest" is safe and survives runner retirements.
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
       - name: Install universal Python from python.org
