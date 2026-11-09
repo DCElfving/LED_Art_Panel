@@ -1,5 +1,9 @@
 # LED Art Panel
 
+<p align="center">
+  <img src="docs/images/hero-three-panels.jpg" alt="Two finished LED Art Panels glowing behind frosted diffusers, next to a bare LED matrix" width="600">
+</p>
+
 Inspired by and in homage to the work of San Francisco artist Jim Campbell. The project is an LED based, WiFi-enabled digital display. An **ESP32** microcontroller drives a **32×32 RGB LED matrix** (HUB75) that plays images and animated GIFs uploaded from your phone or computer, or runs generative animated effects. 
 
 Everything is controlled from a small web page hosted on the device itself — no app, no account,
@@ -17,7 +21,7 @@ with a new look, new effects, new features, or a by creating a completely differ
 ## Contents
 
 - [What you'll build](#what-youll-build)
-- [What you need](#what-you-need)
+- [What you need](#what-you-need) (full parts list: [BOM.md](./BOM.md))
 - [Get started from zero](#get-started-from-zero)
 - [How the project is organized](#how-the-project-is-organized)
 - [Make it your own](#make-it-your-own)
@@ -40,17 +44,34 @@ When it's running you'll have a small framed LED panel that:
 
 You control brightness, timing, effects, and WiFi from that web page.
 
+<p align="center">
+  <a href="docs/images/demo.mp4"><img src="docs/images/demo-poster.jpg" alt="Video: the panel running the fire effect, then a look at the wiring behind it (click to play)" width="300"></a>
+  <img src="docs/images/phone-web-ui.jpg" alt="The panel showing a portrait, with the web control page's image gallery open on a phone" width="300">
+</p>
+<p align="center"><em>Left: the fire effect, then the wiring behind the panel (click to play the video). Right: the control page on a phone.</em></p>
+
 ---
 
 ## What you need
 
-**Hardware**
+**Hardware** — the full parts list (with PCB part numbers and enclosure files) is in
+**[BOM.md](./BOM.md)**.
 - An **ESP32 development board** (the original ESP32, e.g. ESP32-WROOM DevKit).
 - A **32×32 HUB75 RGB LED matrix panel**.
 - A **5V power supply** sized for the panel (a 32×32 panel can draw up to ~2–4A
   at full brightness — don't try to power the LEDs from the ESP32's USB). If using an LED Art Panel PCB received at a workshop, you *can* power the project with a USB-C cable and power supply.
 - The LED Art Panel PCB and connectors, *or* a ribbon cable with jumper wires to connect the
   ESP32 to the panel's HUB75 header.
+
+<p align="center">
+  <img src="docs/images/esp32-and-pcb.jpg" alt="USB-C ESP32 DevKit next to two bare LED Art Panel PCBs" width="400">
+  <img src="docs/images/panel-diffuser-backplate.jpg" alt="P6 32x32 LED panel, white acrylic diffuser, black acrylic backplate, and the 4-pin power cable" width="400">
+</p>
+<p align="center">
+  <img src="docs/images/pcb-side-view.jpg" alt="Side view: ESP32 plugged into the PCB, HUB75 header underneath, 4-pin power header at the end" width="400">
+  <img src="docs/images/pcb-hub75-header.jpg" alt="Underside of the assembled PCB with the 2x8 HUB75 header and the 4-pin power pads" width="300">
+</p>
+<p align="center"><em>The ESP32 and PCB; the panel, diffuser, backplate and power cable; the assembled PCB from the side and from below.</em></p>
 
 **Wiring (ESP32 GPIO → HUB75 pin).** These are set at the top of
 `LED_Art_Panel.ino`; change them there if your board and/or LED pabel differs.

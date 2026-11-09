@@ -21,6 +21,9 @@ sketch + a self-contained web page.
   comes from `sketch.yaml`. Packaged with PyInstaller (`Setup-Mac`,
   `Setup-Windows.exe`, `Setup-Linux`; `.github/workflows/build-setup.yml`).
 - `sketch.yaml` — `default_fqbn` with the No OTA partition scheme.
+- `BOM.md` — bill of materials (PCB parts from `Hardware Files/light_panel.fzz`).
+- `docs/images/` — README/BOM photos and `demo.mp4` (metadata stripped).
+- `Hardware Files/` — Fritzing PCB, Gerbers, frame/easel templates (.ai).
 
 ## Build & flash constraints (do not violate)
 - **ESP32 Arduino core: 3.3.x stable.** NOT 4.x-alpha (removes `driver/i2s.h` →
