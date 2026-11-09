@@ -60,7 +60,7 @@ You control brightness, timing, effects, and WiFi from that web page.
 - An **ESP32 development board** (the original ESP32, e.g. ESP32-WROOM DevKit).
 - A **32×32 HUB75 RGB LED matrix panel**.
 - A **5V power supply** sized for the panel (a 32×32 panel can draw up to ~2–4A
-  at full brightness — don't try to power the LEDs from the ESP32's USB). If using an LED Art Panel PCB received at a workshop, you *can* power the project with a USB-C cable and power supply.
+  at full brightness — don't try to power the LEDs from the ESP32's USB). If using the LED Art Panel PCB, you *can* power the project with a USB-C cable and power supply.
 - The LED Art Panel PCB and connectors, *or* a ribbon cable with jumper wires to connect the
   ESP32 to the panel's HUB75 header.
 
@@ -96,28 +96,58 @@ common ground.)
 
 ## Get started from zero
 
-This walks you through everything, assuming a brand-new computer with no
-development tools. It takes about 20–30 minutes the first time.
+A free setup program installs everything your computer needs, so there are no
+commands to type. You don't need your panel for this part.
 
-> **Or let the setup program do Steps 1–5:** `Setup-Mac`, `Setup-Windows.exe`
-> or `Setup-Linux` (or `python3 setup_panel.py`) installs the Arduino IDE,
-> Rosetta (Apple Silicon Macs), Apple's Command Line Developer Tools (Macs; the
-> ESP32 build needs their Python), the USB drivers (or checks for them), the ESP32
-> core (only the original-ESP32 parts, about 500 MB), the libraries and the
-> LittleFS plugin, then test-compiles. It never uploads anything to a panel and
-> runs from anywhere (inside this folder, it test-compiles this sketch). Run it
-> again any time; `check` only reports. If macOS says it "could not verify" the
-> program, open **System Settings → Privacy & Security** and click **Open
-> Anyway**; on Windows click **More info → Run anyway**. If it fails, it saves
-> **LED Art Panel setup log.txt** on the Desktop. See
-> [Building the setup program](#building-the-setup-program).
+**You'll need:** a Mac, Windows or Linux computer (not a Chromebook or iPad),
+about **6 GB of free disk space** (3 GB on Windows), an internet connection, and
+30–45 minutes (less on Windows), mostly waiting for downloads.
 
-### 1. Install the Arduino IDE
+### 1. Download the setup program for your computer
+
+- **Mac** (any Mac, Apple chip or Intel): [**Setup-Mac.zip**](https://github.com/DCElfving/LED_Art_Panel/releases/latest/download/Setup-Mac.zip)
+- **Windows** 10/11: [**Setup-Windows.exe**](https://github.com/DCElfving/LED_Art_Panel/releases/latest/download/Setup-Windows.exe)
+- **Linux** (64-bit): [**Setup-Linux.zip**](https://github.com/DCElfving/LED_Art_Panel/releases/latest/download/Setup-Linux.zip)
+
+### 2. Run it
+
+- **Mac:** open your Downloads folder. If you see `Setup-Mac.zip`, double-click
+  it to unzip it. Then double-click `Setup-Mac`. Your Mac will probably say
+  *"Apple could not verify 'Setup-Mac' is free of malware"*. That's expected:
+  it's a small open-source program, not from the App Store. Click **Done**, open
+  **System Settings → Privacy & Security**, scroll down to the message about
+  "Setup-Mac", click **Open Anyway**, and enter your password. Then, when it asks:
+  - **Rosetta:** type **y**, then your Mac password and Enter. Nothing appears
+    while you type the password; that's normal.
+  - **Apple's Command Line Developer Tools:** type **y**. A window from Apple
+    opens: click **Install**, then **Agree**, and wait for it to finish (5–20
+    minutes). The setup carries on by itself afterwards.
+- **Windows:** double-click `Setup-Windows.exe`. If Windows says *"Windows
+  protected your PC"*, click **More info**, then **Run anyway**.
+- **Linux:** unzip `Setup-Linux.zip`, then double-click `Setup-Linux` (or run
+  `./Setup-Linux` in a terminal).
+
+A window opens and works through eight steps. Answer any questions by typing
+**y** and pressing Enter, and keep the window open until it says **"All done:
+this computer is ready"**. It's safe to run again if anything goes wrong; it
+skips whatever is already installed.
+
+If it doesn't finish, the window says what went wrong and what to try (most often
+it's the internet connection, so try again on a different network). Everything it
+printed is also saved in **LED Art Panel setup log.txt** on your Desktop.
+
+<details>
+<summary><strong>Manual setup</strong> (if the setup program won't run on your computer)</summary>
+
+If you already have Python 3.8 or later, `python3 setup_panel.py` from this
+project does the same thing as the setup program. Otherwise, do these steps by hand.
+
+#### 1. Install the Arduino IDE
 
 Download **Arduino IDE 2.x** from <https://www.arduino.cc/en/software> and install
 it. Open it once so it finishes first-time setup.
 
-### 2. Add ESP32 board support
+#### 2. Add ESP32 board support
 
 The Arduino IDE doesn't know about ESP32 chips until you add them.
 
@@ -136,18 +166,18 @@ The Arduino IDE doesn't know about ESP32 chips until you add them.
 > `driver/i2s.h: No such file or directory`. Also avoid the old 2.x line. See
 > [Build & flash reference](#build--flash-reference).
 
-### 3. Install the USB driver (only if needed)
+#### 3. Install the USB driver (only if needed)
 
 Plug the ESP32 in. If a port shows up under **Tools → Port**, skip this. If not,
 install the driver for your board's USB-serial chip — usually **CP210x**
 (Silicon Labs) or **CH340** (WCH). Search your board's name + "driver".
 
-### 4. Install the LED matrix library
+#### 4. Install the LED matrix library
 
 **Tools → Manage Libraries…**, search **ESP32 HUB75 LED MATRIX PANEL DMA Display**
-(by *MrCodetastic*) and install it (version 3.1.0, the one the class uses, or later).
+(by *MrCodetastic*) and install it (version 3.1.0 or later).
 
-### 5. Install the filesystem uploader (for the web page)
+#### 5. Install the filesystem uploader (for the web page)
 
 The web page lives in the panel's flash memory, uploaded separately from the
 program. For Arduino IDE 2.x you need the **LittleFS uploader plugin**:
@@ -160,44 +190,43 @@ program. For Arduino IDE 2.x you need the **LittleFS uploader plugin**:
    - **Windows:** `C:\Users\<you>\.arduinoIDE\plugins\`
 3. Fully quit and reopen the Arduino IDE.
 
-### 6. Open the sketch and pick your settings
+</details>
 
-1. Open `LED_Art_Panel/LED_Art_Panel.ino` in the Arduino IDE.
-2. **Tools → Board** → select your ESP32 board (e.g. "ESP32 Dev Module").
-3. **Tools → Port** → select the panel's port.
-4. **Tools → Partition Scheme** → choose **"No OTA (1MB APP / 3MB SPIFFS)"**.
-   This reserves the most space for your images.
+### 3. Download the project
 
-### 7. Upload the program
+On the [project's GitHub page](https://github.com/DCElfving/LED_Art_Panel), click
+**Code → Download ZIP** and unzip it. Rename the folder from `LED_Art_Panel-main`
+to exactly **`LED_Art_Panel`**; the Arduino IDE only opens a sketch whose folder
+has the same name as its `.ino` file.
 
-Click the **Upload** (→) button. The IDE compiles and flashes the firmware.
-When it finishes, the ESP32 restarts.
+### 4. Upload the program
 
-### 8. Upload the web page (the `data/` folder)
+1. Plug the panel's ESP32 into your computer with a USB cable.
+2. Open `LED_Art_Panel/LED_Art_Panel.ino` in the Arduino IDE.
+3. Set these in the **Tools** menu:
+   - **Board → esp32 → ESP32 Dev Module** (exactly that one, not S2, S3 or C3)
+   - **Partition Scheme → No OTA (1MB APP / 3MB SPIFFS)**
+   - **Port →** your panel
+4. Click **Upload** (→). When it finishes, the ESP32 restarts.
 
-The program is on the chip, but the control page isn't yet. Upload it:
+### 5. Upload the web page
 
-1. **Close the Serial Monitor** if it's open (the upload fails otherwise).
-2. Press **`Ctrl+Shift+P`** (macOS: **`⌘+Shift+P`**), type **"Upload LittleFS"**,
-   and choose **"Upload LittleFS to Pico/ESP8266/ESP32"**.
+The control page lives in the panel's flash memory and is uploaded separately.
+Close the Serial Monitor if it's open, then press **`Ctrl+Shift+P`** (Mac:
+**`⌘+Shift+P`**), type **"Upload LittleFS"**, and choose **"Upload LittleFS to
+Pico/ESP8266/ESP32"**. If you skip this, the panel runs but its page shows
+"index.html not found."
 
-This copies everything in `LED_Art_Panel/data/` (the web page) into the panel.
+### 6. Connect to your panel
 
-> If you skip this step the panel runs, but opening its page shows
-> "index.html not found."
+With no WiFi saved yet, the panel creates its **own WiFi hotspot** named
+**`Panel_XXXX`** and shows **WIFI** with those four characters underneath (e.g.
+**C3D4** for `Panel_C3D4`).
 
-### 9. First boot — connect and configure
-
-On first power-up (with no WiFi saved yet) the panel creates its **own open WiFi
-hotspot** named **`Panel_XXXX`** (where `XXXX` is unique to your board).
-Until you upload an image, the panel shows **WIFI** with those four characters
-underneath (e.g. **C3D4** for `Panel_C3D4`), so you know which network to join.
-
-1. Join that `Panel_XXXX` network from your phone/computer.
-2. Open a browser to the panel — try **`http://led-panelXXXX.local`** or the
-   panel's hotspot address.
-3. Upload a few images, and in **Settings** enter your home WiFi so you can reach
-   it on your normal network afterward (it will reboot to apply).
+1. Join that `Panel_XXXX` network from your phone or computer.
+2. Open **`http://192.168.4.1`** (or **`http://led-panelXXXX.local`**) in a browser.
+3. Upload a few images. In **Settings**, enter your home WiFi so you can reach the
+   panel on your normal network afterward (it reboots to apply).
 
 That's it — you have a working LED art panel.
 
@@ -212,7 +241,7 @@ That's it — you have a working LED art panel.
 | `MinimalFX.h` | A tiny effects-engine helper that pushes pixels to the panel (keeps the program small). |
 | `PlaybackState.h` | Reads one image file from flash and holds the current frame. |
 | `data/index.html` | The entire web control page (HTML + CSS + JavaScript in one file). |
-| `setup_panel.py` | Sets up a student computer (Arduino IDE, drivers, ESP32 package, libraries). See Get started from zero. |
+| `setup_panel.py` | Sets up a computer to program the panel (Arduino IDE, drivers, ESP32 package, libraries). See Get started from zero. |
 | `sketch.yaml` | This sketch's board settings (ESP32 Dev Module, No OTA partition scheme), read by `setup_panel.py`. |
 
 **Three display modes:** *Images* (uploaded art), *Effects* (generative), and the
@@ -228,8 +257,8 @@ heavy image work. (Format details in [Technical reference](#technical-reference)
 ## Make it your own
 
 This project is meant to be a **starting point**. Here's how to take it in your
-own direction. Firmware changes need a re-flash (step 7); web page changes need
-the `data/` folder re-uploaded (step 8).
+own direction. Firmware changes need a re-flash (step 4); web page changes need
+the `data/` folder re-uploaded (step 5).
 
 ### Give it a new look (redesign the UI)
 
@@ -239,7 +268,7 @@ block). Nothing is loaded from the internet, so it works offline on the device.
 
 - To restyle, edit the `<style>` block. The color palette is defined once at the
   top (CSS variables under `:root`), so changing a few values reskins the whole page.
-- When you like it, re-upload the `data/` folder (step 8) to put it on the device.
+- When you like it, re-upload the `data/` folder (step 5) to put it on the device.
 
 Ideas: a different theme or font, larger touch targets, a simplified single-screen
 layout, a live clock, a different arrangement of the gallery.
@@ -351,10 +380,8 @@ The essentials, in one place:
 
 ### Building the setup program
 
-`setup_panel.py` is plain Python (standard library only) and is the same file
-as in the networked version, which also has a draft pre-class email for
-students (`STUDENT_EMAIL.md`). This sketch's board settings come from
-`sketch.yaml`. The double-click versions are made with
+`setup_panel.py` is plain Python (standard library only). This sketch's board
+settings come from `sketch.yaml`. The double-click versions are made with
 [PyInstaller](https://pyinstaller.org): `.github/workflows/build-setup.yml`
 builds `Setup-Mac` (one universal program for every Mac), `Setup-Windows.exe`
 and `Setup-Linux` on GitHub (**Actions → Build setup executables → Run

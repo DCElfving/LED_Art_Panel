@@ -2,9 +2,9 @@
 """
 setup_panel.py — get a computer ready to program the LED Art Panel.
 
-Students run this once, at home, before the first class. It installs
-everything the Arduino IDE needs for this project, so in class they can open
-LED_Art_Panel.ino, plug in their (already-flashed) panel and click Upload:
+Run this once on each computer you'll program the panel from. It installs
+everything the Arduino IDE needs for this project, so you can then open
+LED_Art_Panel.ino, plug in your panel and click Upload:
 
   1. The Arduino IDE itself
   2. Rosetta (Apple Silicon Macs only; one of the IDE's tools needs it)
@@ -20,8 +20,8 @@ It never uploads anything to a panel, and it doesn't need the project code:
 run it from anywhere. (If it's inside an LED_Art_Panel folder, the test
 compile uses that project; otherwise it compiles a small built-in test sketch.)
 
-Everything it prints also goes into a log file on the Desktop, so a student who
-gets stuck can email it to their instructor.
+Everything it prints also goes into a log file on the Desktop, so if you get
+stuck you can read it or share it with whoever is helping you.
 
 Usage (Python 3.8+, no extra packages needed):
 
@@ -33,7 +33,7 @@ Options: --yes (don't ask questions), --no-verify (skip the test compile).
 Running it again is safe: anything already installed is skipped, and a
 download that failed part-way carries on where it stopped.
 
-Instructors: Windows USB drivers can't be downloaded by a script. Put the
+Windows USB drivers can't be downloaded by a script. Put the
 driver installers in a folder called drivers/ before building the executable
 and they're packed inside it (see drivers/README.txt).
 """
@@ -55,12 +55,12 @@ import urllib.request
 from pathlib import Path
 
 # ---- Versions this project was tested with -----------------------------------
-# Pinned so every student in a class gets the same setup. Bump them together,
+# Pinned so every computer gets the same, tested setup. Bump them together,
 # after checking the sketch still compiles and runs.
 IDE_VERSION = "2.3.10"
 ESP32_CORE_VERSION = "3.3.12"
 # "@version" is the version installed and the oldest one accepted: a newer
-# one the student already has (e.g. updated in the IDE) is left alone.
+# one already installed (e.g. updated in the IDE) is left alone.
 LIBRARIES = [
     "ESP32 HUB75 LED MATRIX PANEL DMA Display@3.1.0",
     "Adafruit GFX Library",          # the HUB75 library draws through this
@@ -132,7 +132,7 @@ USB_CHIPS = {
 }
 
 ASSUME_YES = False
-problems = []    # things the student still has to fix, printed at the end
+problems = []    # things still to fix by hand, printed at the end
 
 
 # ---- The log file ----------------------------------------------------------------
@@ -221,7 +221,7 @@ def finish(code=0):
     if code and log_file:
         say("\n  A record of everything above is saved in:")
         say("    " + LOG_PATH)
-        say("  If you can't fix it, email that file to your instructor.")
+        say("  If you can't fix it, share that file with whoever is helping you.")
     # Only when someone's at the keyboard: an unattended run (the automatic
     # test on GitHub) has no keyboard and would wait forever.
     if FROZEN and sys.stdin and sys.stdin.isatty():
@@ -273,7 +273,7 @@ def download(url, dest, tries=3):
                 time.sleep(5)
     hint = ""
     if "CERTIFICATE" in str(error).upper():
-        hint = "\n         (A security certificate couldn't be checked; tell your instructor.)"
+        hint = "\n         (A security certificate couldn't be checked; see the log file.)"
     fail("Download failed: %s%s\n         Check your internet connection and run this again."
          % (error, hint))
 
@@ -488,7 +488,7 @@ def walk_drivers():
                 yield entry
 
 def install_windows_drivers_from_folder():
-    """Install every driver the instructor put in drivers/ (one admin prompt)."""
+    """Install every driver packed in drivers/ (one admin prompt)."""
     infs, exes = [], []
     for root, _, files in walk_drivers():
         for f in files:
@@ -841,8 +841,8 @@ def step_preflight():
             log("  %s: %r" % (url, e))
             if "CERTIFICATE" in str(e).upper():
                 fail("Couldn't check the security certificate of %s. This is a problem\n"
-                     "         with the setup program, not your computer: please email the\n"
-                     "         log file below to your instructor." % url.split("//")[1])
+                     "         with the setup program, not your computer: please share the\n"
+                     "         log file below with whoever is helping you." % url.split("//")[1])
             fail("Can't reach %s, which has %s.\n"
                  "         Check that you're online. School and work networks sometimes\n"
                  "         block it: if so, run this again on a home network."
@@ -911,7 +911,7 @@ def report_boards(cli):
     for addr, chip in boards:
         ok("Panel connected on %s (%s); pick this in Tools -> Port" % (addr, chip))
     if not boards:
-        say("  [..]   No panel plugged in. That's fine: you'll plug it in in class.")
+        say("  [..]   No panel plugged in. That's fine: plug it in when you're ready to upload.")
 
 
 # ---- Main ----------------------------------------------------------------------------
@@ -965,7 +965,7 @@ def main():
     say("""
   All done: this computer is ready for the LED Art Panel.
 
-  In class, to program your panel:
+  To program your panel:
     1. Open LED_Art_Panel.ino (from the project folder) in the Arduino IDE.
     2. Tools -> Board -> esp32 -> ESP32 Dev Module
        (exactly that one: not "ESP32S2", "ESP32S3" or "ESP32C3 Dev Module")

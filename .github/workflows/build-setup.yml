@@ -1,7 +1,6 @@
-# Builds the student setup program (setup_panel.py) as a double-clickable
+# Builds the setup program (setup_panel.py) as a double-clickable
 # executable for each system. Run it from the Actions tab ("Run workflow"),
-# then download the three files from the run's Artifacts and share them with
-# students (see STUDENT_EMAIL.md).
+# then download the three files from the run's Artifacts.
 #
 # The Mac and Linux programs are zipped: a bare program downloaded by a
 # browser (or uploaded as an artifact) loses its "executable" permission and
@@ -82,7 +81,7 @@ jobs:
           name: ${{ matrix.name }}
           path: dist/*
 
-      # ---- Windows only: run the program the way a student would, unattended.
+      # ---- Windows only: run the program the way a user would, unattended.
       - name: Test - full setup
         if: runner.os == 'Windows'
         run: dist\Setup-Windows.exe --yes
@@ -121,7 +120,7 @@ jobs:
         run: |
           files="artifacts/Setup-Mac/Setup-Mac.zip artifacts/Setup-Windows/Setup-Windows.exe artifacts/Setup-Linux/Setup-Linux.zip"
           ls -l $files
-          notes="Setup programs for student computers. Download the one for your computer:
+          notes="Setup programs for the LED Art Panel. Download the one for your computer:
           - Setup-Mac.zip: any Mac (Apple chip or Intel). Unzip, then double-click Setup-Mac.
           - Setup-Windows.exe: Windows 10/11.
           - Setup-Linux.zip: 64-bit Linux."

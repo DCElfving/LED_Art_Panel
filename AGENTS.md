@@ -14,11 +14,10 @@ sketch + a self-contained web page.
 - `MinimalFX.h` — tiny effects engine that pushes pixels to the panel.
 - `PlaybackState.h` — reads one image file, holds the current 32×32 frame.
 - `data/index.html` — the entire web UI (HTML+CSS+JS in one file, no external assets).
-- `setup_panel.py` — stdlib Python environment setup for student computers (IDE,
+- `setup_panel.py` — stdlib Python environment setup for a new computer (IDE,
   Rosetta, USB drivers, pinned core + libraries, LittleFS plugin, test compile;
   never flashes; runs from anywhere, test-compiling this sketch when run from
-  its folder). Identical to the networked version's copy; this sketch's FQBN
-  comes from `sketch.yaml`. Packaged with PyInstaller (`Setup-Mac`,
+  its folder). This sketch's FQBN comes from `sketch.yaml`. Packaged with PyInstaller (`Setup-Mac`,
   `Setup-Windows.exe`, `Setup-Linux`; `.github/workflows/build-setup.yml`).
 - `sketch.yaml` — `default_fqbn` with the No OTA partition scheme.
 - `BOM.md` — bill of materials (PCB parts from `Hardware Files/light_panel.fzz`).
