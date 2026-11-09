@@ -25,6 +25,7 @@ with a new look, new effects, new features, or a by creating a completely differ
 - [Get started from zero](#get-started-from-zero)
 - [How the project is organized](#how-the-project-is-organized)
 - [Make it your own](#make-it-your-own)
+- [Free and open source](#free-and-open-source)
 - [Working with an AI assistant](#working-with-an-ai-assistant)
 - [Build & flash reference](#build--flash-reference)
 - [Troubleshooting](#troubleshooting)
@@ -283,6 +284,23 @@ LED projects. To repurpose it:
 
 Examples: a scrolling message board, a weather/clock display, a live audio
 visualizer, a status board driven by web requests.
+
+---
+
+## Free and open source
+
+Everything here is free: the firmware, the web page, the PCB design and Gerbers, the
+laser-cut templates, the [bill of materials](./BOM.md) and these instructions. It's
+released under [CC0 1.0](./LICENSE), so it's in the public domain. You don't need
+permission, and credit is appreciated but not required.
+
+You're encouraged to:
+
+- **Build your own** panel, or a few to give away.
+- **Run your own workshop.** Teach soldering, microcontrollers and AI coding with it at a
+  school, library, makerspace or community space.
+- **Share it** with anyone who might enjoy it.
+- **Remix it** into projects of your own (see [Make it your own](#make-it-your-own)).
 
 ---
 
